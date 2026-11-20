@@ -206,14 +206,16 @@
     var h = '<span class="potion" title="耗水程度 ' + n + ' / 5">耗水 '; for (var i = 1; i <= 5; i++) h += '<i class="' + (i <= n ? 'f' : '') + '"></i>'; return h + '</span>';
   }
 
-  function lvPicker(L, id) {
-    return '<div class="lvbar"><span class="lvnum">Lv <input type="number" min="1" max="200" value="' + L + '" id="' + id + 'Num" inputmode="numeric"></span>' +
-      '<input type="range" min="1" max="200" value="' + L + '" id="' + id + 'Rng" aria-label="角色等級">' +
-      '<div class="mile">' + MILES.map(function (m) { return '<button data-lv="' + m + '" class="' + (m === L ? 'on' : '') + '">' + m + '</button>'; }).join('') + '</div></div>';
+  function lvPicker(L, id, max) {
+    max = max || 200;
+    var miles = MILES.filter(function (m) { return m < max; }).concat([max]);
+    return '<div class="lvbar"><span class="lvnum">Lv <input type="number" min="1" max="' + max + '" value="' + L + '" id="' + id + 'Num" inputmode="numeric"></span>' +
+      '<input type="range" min="1" max="' + max + '" value="' + L + '" id="' + id + 'Rng" aria-label="角色等級">' +
+      '<div class="mile">' + miles.map(function (m) { return '<button data-lv="' + m + '" class="' + (m === L ? 'on' : '') + '">' + m + '</button>'; }).join('') + '</div></div>';
   }
-  function wirePicker(id, onChange) {
+  function wirePicker(id, onChange, max) {
     var num = $('#' + id + 'Num'), rng = $('#' + id + 'Rng');
-    function set(v, commit) { v = Math.max(1, Math.min(200, Math.round(+v || 1))); num.value = v; rng.value = v; onChange(v, commit); }
+    function set(v, commit) { v = Math.max(1, Math.min(max || 200, Math.round(+v || 1))); num.value = v; rng.value = v; onChange(v, commit); }
     rng.oninput = function () { set(rng.value, false); };
     rng.onchange = function () { set(rng.value, true); };
     num.onchange = function () { set(num.value, true); };
@@ -223,16 +225,17 @@
   // ----- build tab -----
   function renderBuild(x) {
     var b = window.BUILDS[x.c.key][x.ver][x.tab], sim = E.simulate(x.cls, b.steps, swapFor(x.c, x.cls));
-    var L = Math.max(1, Math.min(200, +x.q.lv || 120));
-    x.build = b; x.sim = sim; x.L = L;
+    var M = Math.max(10, Math.min(200, +b.maxLv || 200));
+    var L = Math.max(1, Math.min(M, +x.q.lv || Math.min(120, M)));
+    x.build = b; x.M = M; x.sim = sim; x.L = L;
     var body = $('#tabBody');
     var err = sim.errors.length ? '<p class="notice rose">⚠ 這套加點有規則問題：' + sim.errors.map(esc).join('；') + '</p>' : '';
     body.innerHTML = err +
-      '<section class="card summary"><h2>' + (x.tab === 'burn' ? '🔥' : '💰') + ' ' + esc(b.title) + ' ' + potion(b.potion) +
+      '<section class="card summary"><h2>' + (x.tab === 'burn' ? '🔥' : '💰') + ' ' + esc(b.title) + ' ' + potion(b.potion) + (M < 200 ? ' <span class="chip ref">📌 參照 Lv' + M + '</span>' : '') +
       (window.Admin && window.Admin.on() ? '<button class="btn edit-btn" id="editBuild">✏️ 編輯這套</button>' : '') + '</h2><p>' + esc(b.summary) + '</p>' +
       '<div class="pc"><div class="pro"><b>優點</b><ul>' + b.pros.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>' +
       '<div class="con"><b>缺點</b><ul>' + b.cons.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div></div></section>' +
-      '<div class="cols"><section class="card"><h2>📋 技能視窗 <span class="muted">拉到你的等級看該點到哪</span></h2>' + lvPicker(L, 'bv') + '<div id="bvWin"></div>' +
+      '<div class="cols"><section class="card"><h2>📋 技能視窗 <span class="muted">拉到你的等級看該點到哪</span></h2>' + lvPicker(L, 'bv', M) + '<div id="bvWin"></div>' +
       '<button class="btn" id="toSim">🎮 用這套在模擬器微調</button></section>' +
       '<section class="card"><h2>🧭 加點順序 <span class="muted">由上往下點</span></h2><ol class="steps" id="stepList"></ol></section></div>';
     function paint(L2) {
@@ -251,7 +254,7 @@
     wirePicker('bv', function (v, commit) {
       paint(v);
       if (commit) history.replaceState(null, '', '#/' + x.c.key + '/' + x.ver + '/' + x.tab + '?lv=' + v);
-    });
+    }, M);
     if ($('#editBuild')) $('#editBuild').onclick = function () { window.Admin.edit(x, body); };
     $('#toSim').onclick = function () {
       var cur = E.levelsAt(sim.log, x.L);
@@ -269,7 +272,8 @@
         h += '<li class="stage">' + esc(stageLabel(x.cls.stages[m.stage].name)) + (note ? '<small>💡 ' + esc(note) + '</small>' : '') + '</li>';
       }
       var s = m.skill, c = E.cost(s.lv[st.to - 1]);
-      var range = st.lvStart === undefined ? '200 級後' : (st.lvEnd === undefined ? 'Lv' + st.lvStart + ' ~ 200+' : (st.lvStart === st.lvEnd ? 'Lv' + st.lvStart : 'Lv' + st.lvStart + ' ~ ' + st.lvEnd));
+      var M = x.M || 200;
+      var range = (st.lvStart === undefined || st.lvStart > M) ? 'Lv' + M + ' 後' : (st.lvEnd === undefined || st.lvEnd > M ? 'Lv' + st.lvStart + ' ~ ' + M + '+' : (st.lvStart === st.lvEnd ? 'Lv' + st.lvStart : 'Lv' + st.lvStart + ' ~ ' + st.lvEnd));
       h += '<li data-s="' + i + '"><span class="no">' + (i + 1) + '</span><img class="ic" src="' + s.img + '" alt="" loading="lazy"><span>' + esc(s.name) +
         ' <span class="to">' + (st.from ? st.from + '→' : '') + st.to + '</span>' + costTag(c) + '</span><span class="lvr">' + range + '</span></li>';
     });

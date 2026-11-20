@@ -17,7 +17,7 @@ for (const c of CLASSES) for (const v of c.vers) for (const b of ['burn', 'save'
   for (const weapon of c.weapon ? ['a', 'b'] : ['-']) {
     const before = fail;
     const tag = `${c.key}/${v}/${b}${weapon !== '-' ? '/' + weapon : ''}`;
-    const vr = E.validate(cls, build.steps, weapon === 'b' ? swap : null), r = vr.sim;
+    const vr = E.validate(cls, build.steps, weapon === 'b' ? swap : null, build.maxLv), r = vr.sim;
     vr.errors.forEach(e => ok(false, tag + ': ' + e));
     for (const k of ['title', 'summary', 'pros', 'cons', 'potion']) ok(build[k] != null && build[k] !== '', tag + ': 缺少 ' + k);
     const at = L => E.stageSums(cls, E.levelsAt(r.log, L));

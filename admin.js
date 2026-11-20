@@ -64,13 +64,20 @@
   function edit(x, body) {
     var b = JSON.parse(JSON.stringify(window.BUILDS[x.c.key][x.ver][x.tab]));
     var cls = x.cls, map = E.index(cls), notes = b.notes || {};
-    var PER = [
-      { name: '新手', range: 'Lv1~10', budget: cls.beginnerSp },
-      { name: '1轉期', range: 'Lv' + cls.start + '~30', budget: cls.req[0] },
-      { name: '2轉期', range: 'Lv30~70', budget: cls.req[1] - cls.req[0] },
-      { name: '3轉期', range: 'Lv70~120', budget: cls.req[2] - cls.req[1] },
-      { name: '4轉期', range: 'Lv120~200', budget: E.mainSp(cls, 200) - cls.req[2] }
-    ];
+    var M = Math.max(10, Math.min(200, +b.maxLv || 200)), PER;
+    // 依參照等級 M 算每一段有幾點：已經走完的轉職階段要剛好點完，M 所在的那一段點不完也可以
+    function computePER() {
+      var total = E.mainSp(cls, M), startCum = [0, 0, cls.req[0], cls.req[1], cls.req[2]], endCum = [0, cls.req[0], cls.req[1], cls.req[2], Infinity];
+      var lvA = [1, cls.start, 30, 70, 120], lvB = [10, 30, 70, 120, 200];
+      PER = ['新手', '1轉期', '2轉期', '3轉期', '4轉期'].map(function (name, k) {
+        var budget, full;
+        if (k === 0) { budget = M >= 10 ? cls.beginnerSp : 0; full = M >= 10; }
+        else { budget = Math.max(0, Math.min(total, endCum[k]) - startCum[k]); full = total >= endCum[k]; }
+        var reach = k === 0 || M >= lvA[k];
+        return { name: name, budget: budget, full: full, reach: reach, range: reach ? 'Lv' + lvA[k] + '~' + Math.min(lvB[k], M) : 'Lv' + lvA[k] + ' 才開放' };
+      });
+    }
+    computePER();
     // 把原本的步驟切成 5 段
     var seg = [[], [], [], [], []];
     (function () {
@@ -99,9 +106,14 @@
     function levelsAfter(k) { var cur = {}; for (var i = 0; i <= k; i++) seg[i].forEach(function (st) { if (st.to > (cur[st.id] || 0)) cur[st.id] = st.to; }); return cur; }
     function status(k, spent) {
       var bud = PER[k].budget, s = spent[k];
-      if (k === 4) return s <= bud ? { ok: true, txt: '已安排 ' + s + ' / ' + bud } : { ok: true, txt: '已安排 ' + s + ' 點，最後 ' + (s - bud) + ' 點要 Lv200 之後才點得到（顯示為「200 級後」）' };
+      if (!PER[k].reach) return s ? { ok: false, over: true, txt: 'Lv' + M + ' 還點不到這一段，多了 ' + s + ' 點' } : { ok: true, txt: '參照等級還沒到' };
+      if (s > bud) {
+        if (M === 200 && k === 4) return { ok: true, txt: '已安排 ' + s + ' 點，最後 ' + (s - bud) + ' 點要 Lv200 之後才點得到（顯示為「200 級後」）' };
+        return { ok: false, over: true, txt: '超出 ' + (s - bud) + ' 點（Lv' + M + ' 只有 ' + bud + ' 點）' };
+      }
       if (s === bud) return { ok: true, txt: '剛好 ' + s + ' / ' + bud };
-      return { ok: false, txt: s < bud ? '還差 ' + (bud - s) + ' 點（' + s + ' / ' + bud + '）' : '超出 ' + (s - bud) + ' 點' };
+      if (!PER[k].full) return { ok: true, txt: '已安排 ' + s + ' / ' + bud + '（參照等級的最後一段，點不完也可以）' };
+      return { ok: false, txt: '還差 ' + (bud - s) + ' 點（' + s + ' / ' + bud + '）才能轉職' };
     }
 
     body.innerHTML = '<section class="card edit"><h2>✏️ 編輯：' + esc(x.c.name) + '・' + esc(x.V.name) + '・' + esc(b.title) + '</h2>' +
@@ -113,6 +125,9 @@
       '<label>優點（一行一個）<textarea id="edPros" rows="3">' + esc(b.pros.join('\n')) + '</textarea></label>' +
       '<label>缺點（一行一個）<textarea id="edCons" rows="3">' + esc(b.cons.join('\n')) + '</textarea></label>' +
       '</div></details>' +
+      '<div class="ed-lvset"><label>📌 參照等級 Lv <input type="number" id="edMax" min="10" max="200" value="' + M + '"></label>' +
+      '<span class="muted small">這套加點是給幾等的角色看？點數只算到這個等級；最後一段點不完也可以存。</span>' +
+      '<span class="mile">' + [70, 100, 121, 141, 160, 200].map(function (n) { return '<button type="button" data-m="' + n + '">' + n + '</button>'; }).join('') + '</span></div>' +
       '<div class="ed-tabs" id="edTabs"></div><div id="edPeriod"></div>' +
       '<div id="edCheck" class="ed-check"></div>' +
       '<div class="ed-bar"><button class="btn" id="edCancel">取消</button><span class="grow"></span><button class="primary" id="edSave">💾 儲存到網站</button></div></section>';
@@ -120,18 +135,21 @@
     var tabsEl = body.querySelector('#edTabs'), perEl = body.querySelector('#edPeriod'), check = body.querySelector('#edCheck'), saveBtn = body.querySelector('#edSave');
 
     function paint() {
-      var w = walk(), v = E.validate(cls, stepsStr(), null), sim = v.sim;
+      computePER();
+      var w = walk(), v = E.validate(cls, stepsStr(), null, M), sim = v.sim;
+      body.querySelectorAll('.ed-lvset [data-m]').forEach(function (bt) { bt.classList.toggle('on', +bt.dataset.m === M); });
       // 對應每一步在 sim 裡的位置（算 Lv 範圍）
       var idx = 0, simOf = [];
       seg.forEach(function (s, k) { simOf[k] = s.map(function () { return sim.steps[idx++] || {}; }); });
       tabsEl.innerHTML = PER.map(function (p, k) {
         var st = status(k, w.spent);
-        return '<button class="ed-tab' + (k === P ? ' on' : '') + (st.ok ? ' ok' : ' bad') + '" data-p="' + k + '"><b>' + (st.ok ? '✓ ' : '⚠ ') + p.name + '</b><span>' + p.range + '</span></button>';
+        return '<button class="ed-tab' + (k === P ? ' on' : '') + (st.ok ? ' ok' : ' bad') + (p.reach ? '' : ' off') + '" data-p="' + k + '"><b>' + (st.ok ? '✓ ' : '⚠ ') + p.name + '</b><span>' + p.range + '</span></button>';
       }).join('');
       tabsEl.querySelectorAll('.ed-tab').forEach(function (t) { t.onclick = function () { saveNote(); P = +t.dataset.p; paint(); }; });
 
       var st = status(P, w.spent), stageMax = P, after = levelsAfter(P), before = w.before[P];
-      var html = '<div class="ed-budget ' + (st.ok ? 'ok' : 'bad') + '"><b>' + PER[P].name + '（' + PER[P].range + '）</b> 這段有 <b>' + PER[P].budget + '</b> 點：' + st.txt + '</div>';
+      var html = '<div class="ed-budget ' + (st.ok ? 'ok' : 'bad') + '"><b>' + PER[P].name + '（' + PER[P].range + '）</b> 這段有 <b>' + PER[P].budget + '</b> 點：' + st.txt +
+        (w.spent.some(function (x, k) { return status(k, w.spent).over; }) ? ' <button type="button" class="btn" id="edTrim">✂ 刪掉 Lv' + M + ' 之後才點得到的步驟</button>' : '') + '</div>';
       // 技能視窗：只顯示這個階段能點的技能
       html += '<div class="ed-cols"><div>';
       cls.stages.forEach(function (stg, si) {
@@ -161,6 +179,8 @@
         (P > 0 ? '<label class="ed-note">💡 這段的小提示（顯示在加點順序裡）<input id="edNote" value="' + esc(noteVals[P] || '') + '"></label>' : '') +
         '</div></div>';
       perEl.innerHTML = html;
+      var trimBtn = perEl.querySelector('#edTrim');
+      if (trimBtn) trimBtn.onclick = function () { saveNote(); trim(); paint(); };
 
       perEl.querySelectorAll('.sk').forEach(function (row) {
         var id = row.dataset.id;
@@ -193,8 +213,27 @@
     }
     function preOk(s, cur) { for (var pid in (s.pre || {})) if ((cur[pid] || 0) < s.pre[pid]) return false; return true; }
     function costTag(c) { return c ? (c.mp ? '<span class="cost">MP ' + c.mp + '</span>' : '') + (c.hp ? '<span class="cost hp">HP ' + c.hp + '</span>' : '') : ''; }
+    // 每一段只留下參照等級點得到的部分
+    function trim() {
+      var cur = {};
+      seg.forEach(function (s, k) {
+        var left = PER[k].reach ? PER[k].budget : 0;
+        if (M === 200 && k === 4) left = Infinity;
+        for (var i = 0; i < s.length; i++) {
+          var h = cur[s[i].id] || 0, inc = s[i].to - h;
+          if (inc <= 0) continue;
+          if (inc > left) s[i].to = h + left;
+          if (s[i].to <= h) { s.splice(i, 1); i--; continue; }
+          left -= s[i].to - h; cur[s[i].id] = s[i].to;
+        }
+      });
+    }
     function saveNote() { var n = body.querySelector('#edNote'); if (n) noteVals[P] = n.value.trim(); }
 
+    var maxIn = body.querySelector('#edMax');
+    function setM(v) { saveNote(); M = Math.max(10, Math.min(200, Math.round(+v || 200))); maxIn.value = M; paint(); }
+    maxIn.onchange = function () { setM(maxIn.value); };
+    body.querySelectorAll('.ed-lvset [data-m]').forEach(function (bt) { bt.onclick = function () { setM(bt.dataset.m); }; });
     body.querySelector('#edCancel').onclick = function () { window.App.render(); };
     saveBtn.onclick = function () {
       saveNote();
@@ -203,7 +242,7 @@
         potion: +body.querySelector('#edPotion').value,
         summary: body.querySelector('#edSummary').value.trim(),
         pros: lines('#edPros'), cons: lines('#edCons'),
-        steps: stepsStr(), notes: {}
+        steps: stepsStr(), notes: {}, maxLv: M < 200 ? M : undefined
       };
       for (var k in noteVals) if (noteVals[k]) nb.notes[k] = noteVals[k];
       saveBtn.disabled = true; saveBtn.textContent = '儲存中…';

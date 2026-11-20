@@ -291,3 +291,11 @@ dialog#featDlg .dlg { max-width: none; }
 .ed-note input { font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
 .ed-steps li.noop { background: color-mix(in srgb, var(--bad) 10%, var(--card)); border-radius: 8px; }
 .ed-steps li.noop small { display: block; color: var(--bad); font-size: 12px; }
+.chip.ref { font-size: 12.5px; font-weight: 700; color: var(--rose); border-color: var(--rose); }
+.ed-lvset { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border: 2px dashed var(--accent); border-radius: 12px; margin-bottom: 10px; }
+.ed-lvset label { font-weight: 700; }
+.ed-lvset input { width: 70px; font: inherit; font-weight: 900; color: var(--accent-ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 3px 6px; }
+.ed-lvset .mile { display: flex; gap: 4px; flex-wrap: wrap; }
+.ed-lvset .mile button { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 2px 9px; font-size: 13px; }
+.ed-lvset .mile button.on { border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.ed-tab.off { opacity: .45; }

@@ -135,19 +135,24 @@
     return null;
   }
   // 完整檢查一套加點（網站編輯器與 npm run check 共用）：回傳 { sim, errors }
-  function validate(cls, stepsStr, swap) {
+  // maxLv：這套加點參照到幾等（預設 200）。只檢查參照等級以前會遇到的轉職門檻；
+  // 參照 200 等時才要求點數全部安排完。
+  function validate(cls, stepsStr, swap, maxLv) {
+    var M = Math.max(1, Math.min(MAX_LV, +maxLv || MAX_LV));
     var r = simulate(cls, stepsStr, swap), errors = r.errors.slice();
     if (!errors.length) {
       var at = function (L) { return stageSums(cls, levelsAt(r.log, L)); };
       var s29 = at(29), s69 = at(69), s119 = at(119);
-      if (s29[1] !== mainSp(cls, 29)) errors.push('Lv30 轉職前 1 轉點數沒用完（' + s29[1] + ' / ' + mainSp(cls, 29) + '）');
-      if (s69[1] + s69[2] !== mainSp(cls, 69)) errors.push('Lv70 轉職前 1~2 轉點數沒用完（' + (s69[1] + s69[2]) + ' / ' + mainSp(cls, 69) + '）');
-      if (s119[1] + s119[2] + s119[3] !== mainSp(cls, 119)) errors.push('Lv120 轉職前 1~3 轉點數沒用完（' + (s119[1] + s119[2] + s119[3]) + ' / ' + mainSp(cls, 119) + '）');
-      var s200 = at(200), used = s200[1] + s200[2] + s200[3] + s200[4];
-      var allDone = r.steps.every(function (s) { return s.lvEnd !== undefined; });
-      var cap = 0; cls.stages.forEach(function (st, si) { if (si > 0) st.skills.forEach(function (s) { cap += s.max; }); });
-      var should = Math.min(mainSp(cls, 200), cap);
-      if (allDone && used < should) errors.push('步驟全部點完了，但到 Lv200 還剩 ' + (should - used) + ' 點沒安排');
+      if (M >= 30 && s29[1] !== mainSp(cls, 29)) errors.push('Lv30 轉職前 1 轉點數沒用完（' + s29[1] + ' / ' + mainSp(cls, 29) + '）');
+      if (M >= 70 && s69[1] + s69[2] !== mainSp(cls, 69)) errors.push('Lv70 轉職前 1~2 轉點數沒用完（' + (s69[1] + s69[2]) + ' / ' + mainSp(cls, 69) + '）');
+      if (M >= 120 && s119[1] + s119[2] + s119[3] !== mainSp(cls, 119)) errors.push('Lv120 轉職前 1~3 轉點數沒用完（' + (s119[1] + s119[2] + s119[3]) + ' / ' + mainSp(cls, 119) + '）');
+      if (M === MAX_LV) {
+        var s200 = at(200), used = s200[1] + s200[2] + s200[3] + s200[4];
+        var allDone = r.steps.every(function (s) { return s.lvEnd !== undefined; });
+        var cap = 0; cls.stages.forEach(function (st, si) { if (si > 0) st.skills.forEach(function (s) { cap += s.max; }); });
+        var should = Math.min(mainSp(cls, 200), cap);
+        if (allDone && used < should) errors.push('步驟全部點完了，但到 Lv200 還剩 ' + (should - used) + ' 點沒安排');
+      }
     }
     return { sim: r, errors: errors };
   }
