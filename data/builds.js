@@ -439,7 +439,29 @@ window.BUILDS = {
           "4": "聖騎士防禦 30 = 全隊受到傷害 -20%。"
         }
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "magicCrash",
+        "name": "魔防消除",
+        "img": "img/skills/magicCrash.png"
+      },
+      {
+        "id": "patch_1210016",
+        "name": "祝福護甲",
+        "img": "img/skills/patch_1210016.png"
+      },
+      {
+        "id": "patch_1221005",
+        "name": "聖騎士防禦",
+        "img": "img/skills/patch_1221005.png"
+      },
+      {
+        "id": "holyChargeSword",
+        "name": "聖靈之劍",
+        "img": "img/skills/holyChargeSword.png"
+      }
+    ]
   },
   "DarkKnight": {
     "old": {
