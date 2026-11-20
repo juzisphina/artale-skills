@@ -80,7 +80,29 @@ window.BUILDS = {
           "4": "技改版拿掉了魔法反射，點數改給聖靈祈禱 / 超級神聖祈禱。"
         }
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "holySymbol",
+        "name": "神聖祈禱",
+        "img": "img/skills/holySymbol.png"
+      },
+      {
+        "id": "resurrection",
+        "name": "復甦之光",
+        "img": "img/skills/resurrection.png"
+      },
+      {
+        "id": "patch_2321011",
+        "name": "聖靈祈禱",
+        "img": "img/skills/patch_2321011.png"
+      },
+      {
+        "id": "patch_2321012",
+        "name": "超級神聖祈禱",
+        "img": "img/skills/patch_2321012.png"
+      }
+    ]
   },
   "ArchMageFP": {
     "old": {
