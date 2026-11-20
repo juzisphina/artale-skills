@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artale 技能加點站</title>
+<meta name="description" content="Artale 各職業技能加點推薦：燒錢快練 / 省錢性價比兩套，附加點模擬器與 AI 點評。">
+<link rel="icon" href="img/skills/genesis.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#/"><img src="img/skills/mapleWarrior.png" alt=""><span>Artale 技能加點站</span></a>
+  <div class="top-actions">
+    <button class="pill" id="aiKeyBtn" type="button">✨ AI 金鑰</button>
+    <button class="pill lang" id="langBtn" type="button" aria-label="切換簡體／繁體">简</button>
+  </div>
+</header>
+<main id="app"></main>
+<footer class="foot">
+  <p>非官方玩家整理，數字以遊戲內為準。技能資料整理自 <a href="https://jonesgoober8433-lab.github.io/boa19950303-artale/simulator.html" target="_blank" rel="noopener">boa19950303 技能模擬器</a>；聖騎士省錢路線參考 Comboking〈剩歧視簡易一圖〉；更多討論：<a href="https://forum.gamer.com.tw/B.php?bsn=79354" target="_blank" rel="noopener">巴哈姆特 Artale 版</a>。</p>
+</footer>
+
+<dialog id="keyDlg">
+  <form method="dialog" class="dlg">
+    <h3>✨ AI 點評設定</h3>
+    <p class="muted">貼上你自己的 Google Gemini API 金鑰（免費申請：<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>）。金鑰只存在這台裝置的瀏覽器，不會傳到本站。</p>
+    <input id="keyInput" type="password" autocomplete="off" placeholder="AIza… 或 AQ.…">
+    <p class="muted small" id="keyState"></p>
+    <div class="dlg-row">
+      <button type="button" class="ghost" id="keyClear">清除金鑰</button>
+      <span class="grow"></span>
+      <button value="cancel" class="ghost">取消</button>
+      <button type="button" class="primary" id="keySave">儲存</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="data/skills.js"></script>
+<script src="data/builds.js"></script>
+<script src="config.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

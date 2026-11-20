@@ -1,0 +1,1 @@
+{ "name": "artale-skills", "private": true, "scripts": { "check": "node scripts/check.js" } }
