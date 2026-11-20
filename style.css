@@ -268,3 +268,26 @@ dialog#featDlg .dlg { max-width: none; }
 .cls-card .icons { margin-top: auto; padding-top: 8px; }
 /* 職業路線固定佔兩行高度：字多字少，技能圖示都在同一條線 */
 .cls-card .body > .muted.small { min-height: calc(13px * 1.6 * 2); line-height: 1.6; }
+
+/* editor by job period */
+.ed-text { margin-bottom: 12px; }
+.ed-text summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
+.ed-tabs { display: flex; gap: 6px; overflow-x: auto; margin: 6px 0 10px; }
+.ed-tab { flex: 1; min-width: 92px; border: 2px solid var(--line); background: var(--card); border-radius: 12px; padding: 6px 8px; text-align: left; }
+.ed-tab b { display: block; font-size: 14px; }
+.ed-tab span { font-size: 11.5px; color: var(--soft); }
+.ed-tab.ok b { color: var(--ok); }
+.ed-tab.bad b { color: var(--bad); }
+.ed-tab.on { border-color: var(--accent); background: var(--accent-soft); }
+.ed-budget { padding: 8px 12px; border-radius: 12px; margin-bottom: 10px; font-size: 14px; background: color-mix(in srgb, var(--bad) 12%, var(--card)); }
+.ed-budget.ok { background: color-mix(in srgb, var(--ok) 14%, var(--card)); }
+.ed-cols { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 820px) { .ed-cols { grid-template-columns: minmax(0, 1fr); } }
+.sk .lv em { display: block; font-style: normal; font-size: 11px; color: var(--ok); font-weight: 700; }
+.ed-steps li { flex-wrap: nowrap; }
+.ed-nm { flex: 1; min-width: 0; font-size: 14px; }
+.ed-nm b { color: var(--accent-ink); }
+.ed-note { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--soft); margin-top: 10px; }
+.ed-note input { font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.ed-steps li.noop { background: color-mix(in srgb, var(--bad) 10%, var(--card)); border-radius: 8px; }
+.ed-steps li.noop small { display: block; color: var(--bad); font-size: 12px; }

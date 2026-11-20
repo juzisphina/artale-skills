@@ -60,63 +60,144 @@
     document.getElementById('adminOut').onclick = function () { save(TOKEN, null); d.close(); window.App.toast('已登出管理員'); window.App.render(); };
   }
 
-  // ---------- 編輯器 ----------
+  // ---------- 編輯器（依轉職階段分頁編輯）----------
   function edit(x, body) {
     var b = JSON.parse(JSON.stringify(window.BUILDS[x.c.key][x.ver][x.tab]));
-    var steps = b.steps.trim().split(/\s+/).map(function (t) { var p = t.split(':'); return { id: p[0], to: +p[1] }; });
-    var map = E.index(x.cls);
-    var opts = x.cls.stages.map(function (st) {
-      return '<optgroup label="' + esc(st.name) + '">' + st.skills.map(function (s) { return '<option value="' + s.id + '">' + esc(s.name) + '（最高 ' + s.max + '）</option>'; }).join('') + '</optgroup>';
-    }).join('');
-    var notes = b.notes || {};
+    var cls = x.cls, map = E.index(cls), notes = b.notes || {};
+    var PER = [
+      { name: '新手', range: 'Lv1~10', budget: cls.beginnerSp },
+      { name: '1轉期', range: 'Lv' + cls.start + '~30', budget: cls.req[0] },
+      { name: '2轉期', range: 'Lv30~70', budget: cls.req[1] - cls.req[0] },
+      { name: '3轉期', range: 'Lv70~120', budget: cls.req[2] - cls.req[1] },
+      { name: '4轉期', range: 'Lv120~200', budget: E.mainSp(cls, 200) - cls.req[2] }
+    ];
+    // 把原本的步驟切成 5 段
+    var seg = [[], [], [], [], []];
+    (function () {
+      // 依點數切段：1 轉期 = 前 req[0] 點，2 轉期 = 到 req[1] 點… （和遊戲轉職門檻一致）
+      var cum = 0, p = 1, cur = {}, gate = [0, cls.req[0], cls.req[1], cls.req[2]];
+      b.steps.trim().split(/\s+/).forEach(function (t) {
+        var q = t.split(':'), id = q[0], to = +q[1];
+        if (!map[id]) return;
+        if (map[id].stage === 0) { seg[0].push({ id: id, to: to }); cur[id] = to; return; }
+        while (p < 4 && cum >= gate[p]) p++;
+        seg[p].push({ id: id, to: to });
+        cum += Math.max(0, to - (cur[id] || 0)); cur[id] = Math.max(cur[id] || 0, to);
+      });
+    })();
+    var P = 1;
+    function stepsStr() { var a = []; seg.forEach(function (s) { s.forEach(function (st) { a.push(st.id + ':' + st.to); }); }); return a.join(' '); }
+    // 走到第 k 段結束時的等級 + 每段花了幾點
+    function walk() {
+      var cur = {}, spent = [0, 0, 0, 0, 0], before = [];
+      seg.forEach(function (s, k) {
+        before[k] = Object.assign({}, cur);
+        s.forEach(function (st) { var h = cur[st.id] || 0; if (st.to > h) { spent[k] += st.to - h; cur[st.id] = st.to; } st.from = h; });
+      });
+      return { cur: cur, spent: spent, before: before };
+    }
+    function levelsAfter(k) { var cur = {}; for (var i = 0; i <= k; i++) seg[i].forEach(function (st) { if (st.to > (cur[st.id] || 0)) cur[st.id] = st.to; }); return cur; }
+    function status(k, spent) {
+      var bud = PER[k].budget, s = spent[k];
+      if (k === 4) return s <= bud ? { ok: true, txt: '已安排 ' + s + ' / ' + bud } : { ok: true, txt: '已安排 ' + s + ' 點，最後 ' + (s - bud) + ' 點要 Lv200 之後才點得到（顯示為「200 級後」）' };
+      if (s === bud) return { ok: true, txt: '剛好 ' + s + ' / ' + bud };
+      return { ok: false, txt: s < bud ? '還差 ' + (bud - s) + ' 點（' + s + ' / ' + bud + '）' : '超出 ' + (s - bud) + ' 點' };
+    }
+
     body.innerHTML = '<section class="card edit"><h2>✏️ 編輯：' + esc(x.c.name) + '・' + esc(x.V.name) + '・' + esc(b.title) + '</h2>' +
-      '<p class="notice">改完按「儲存到網站」，約 1 分鐘後所有人都會看到。不合遊戲規則時不能儲存。' + (x.c.weapon ? '（聖騎士請用「劍」的技能編輯，棍騎會自動換算）' : '') + '</p>' +
-      '<div class="ed-grid">' +
+      '<p class="notice">一個階段一個階段點：每個轉職階段的點數要剛好用完，才能進下一轉。改完按「儲存到網站」，約 1 分鐘後所有人都會看到。' + (x.c.weapon ? '（請用「' + esc(x.c.weapon[0]) + '」的技能編輯，切換武器會自動換算）' : '') + '</p>' +
+      '<details class="ed-text"><summary>📝 文字說明（標題、簡介、優缺點）</summary><div class="ed-grid">' +
       '<label>標題<input id="edTitle" value="' + esc(b.title) + '"></label>' +
       '<label>耗水程度<select id="edPotion">' + [1, 2, 3, 4, 5].map(function (n) { return '<option' + (n === b.potion ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select></label>' +
       '<label class="full">簡介<textarea id="edSummary" rows="2">' + esc(b.summary) + '</textarea></label>' +
       '<label>優點（一行一個）<textarea id="edPros" rows="3">' + esc(b.pros.join('\n')) + '</textarea></label>' +
       '<label>缺點（一行一個）<textarea id="edCons" rows="3">' + esc(b.cons.join('\n')) + '</textarea></label>' +
-      x.cls.stages.map(function (st, i) { return '<label>' + esc(st.name) + ' 小提示<input data-note="' + i + '" value="' + esc(notes[i] || '') + '"></label>'; }).join('') +
-      '</div>' +
-      '<h3 class="ed-h">加點順序 <span class="muted small">由上往下點；右邊會即時算出在幾等點完</span></h3>' +
-      '<ol class="ed-steps" id="edSteps"></ol>' +
-      '<button class="btn" id="edAdd">＋ 在最後加一步</button>' +
+      '</div></details>' +
+      '<div class="ed-tabs" id="edTabs"></div><div id="edPeriod"></div>' +
       '<div id="edCheck" class="ed-check"></div>' +
       '<div class="ed-bar"><button class="btn" id="edCancel">取消</button><span class="grow"></span><button class="primary" id="edSave">💾 儲存到網站</button></div></section>';
+    var noteVals = {}; for (var nk in notes) noteVals[nk] = notes[nk];
+    var tabsEl = body.querySelector('#edTabs'), perEl = body.querySelector('#edPeriod'), check = body.querySelector('#edCheck'), saveBtn = body.querySelector('#edSave');
 
-    var list = body.querySelector('#edSteps'), check = body.querySelector('#edCheck'), saveBtn = body.querySelector('#edSave');
-    function stepsStr() { return steps.map(function (s) { return s.id + ':' + s.to; }).join(' '); }
     function paint() {
-      var v = E.validate(x.cls, stepsStr(), null), sim = v.sim;
-      list.innerHTML = steps.map(function (s, i) {
-        var m = map[s.id], r = sim.steps[i] || {}, sk = m ? m.skill : null;
-        var range = r.lvStart === undefined ? '—' : (r.lvEnd === undefined ? 'Lv' + r.lvStart + '~' : (r.lvStart === r.lvEnd ? 'Lv' + r.lvStart : 'Lv' + r.lvStart + '~' + r.lvEnd));
-        return '<li data-i="' + i + '"><span class="no">' + (i + 1) + '</span>' + (sk ? '<img class="ic" src="' + sk.img + '" alt="">' : '') +
-          '<select class="ed-sk">' + opts + '</select><input class="ed-to" type="number" min="1" max="' + (sk ? sk.max : 30) + '" value="' + s.to + '" aria-label="點到幾級">' +
-          '<span class="ed-lv">' + range + '</span>' +
-          '<span class="ed-btns"><button class="up" title="上移">↑</button><button class="dn" title="下移">↓</button><button class="ins" title="在下面插入一步">＋</button><button class="del" title="刪除">✕</button></span></li>';
+      var w = walk(), v = E.validate(cls, stepsStr(), null), sim = v.sim;
+      // 對應每一步在 sim 裡的位置（算 Lv 範圍）
+      var idx = 0, simOf = [];
+      seg.forEach(function (s, k) { simOf[k] = s.map(function () { return sim.steps[idx++] || {}; }); });
+      tabsEl.innerHTML = PER.map(function (p, k) {
+        var st = status(k, w.spent);
+        return '<button class="ed-tab' + (k === P ? ' on' : '') + (st.ok ? ' ok' : ' bad') + '" data-p="' + k + '"><b>' + (st.ok ? '✓ ' : '⚠ ') + p.name + '</b><span>' + p.range + '</span></button>';
       }).join('');
-      list.querySelectorAll('li').forEach(function (li) {
-        var i = +li.dataset.i, sel = li.querySelector('.ed-sk');
-        sel.value = steps[i].id;
-        sel.onchange = function () { steps[i].id = sel.value; paint(); };
-        li.querySelector('.ed-to').onchange = function () { steps[i].to = Math.max(1, +this.value || 1); paint(); };
-        li.querySelector('.up').onclick = function () { if (i > 0) { var t = steps[i]; steps[i] = steps[i - 1]; steps[i - 1] = t; paint(); } };
-        li.querySelector('.dn').onclick = function () { if (i < steps.length - 1) { var t = steps[i]; steps[i] = steps[i + 1]; steps[i + 1] = t; paint(); } };
-        li.querySelector('.ins').onclick = function () { steps.splice(i + 1, 0, { id: steps[i].id, to: steps[i].to }); paint(); };
-        li.querySelector('.del').onclick = function () { steps.splice(i, 1); paint(); };
+      tabsEl.querySelectorAll('.ed-tab').forEach(function (t) { t.onclick = function () { saveNote(); P = +t.dataset.p; paint(); }; });
+
+      var st = status(P, w.spent), stageMax = P, after = levelsAfter(P), before = w.before[P];
+      var html = '<div class="ed-budget ' + (st.ok ? 'ok' : 'bad') + '"><b>' + PER[P].name + '（' + PER[P].range + '）</b> 這段有 <b>' + PER[P].budget + '</b> 點：' + st.txt + '</div>';
+      // 技能視窗：只顯示這個階段能點的技能
+      html += '<div class="ed-cols"><div>';
+      cls.stages.forEach(function (stg, si) {
+        if (P === 0 ? si !== 0 : (si === 0 || si > stageMax)) return;
+        html += '<div class="win"><div class="win-h">' + esc(stg.name) + '</div>';
+        stg.skills.forEach(function (s) {
+          var lv = after[s.id] || 0, b0 = before[s.id] || 0, cst = lv ? E.cost(s.lv[lv - 1]) : null;
+          var canUp = lv < s.max && preOk(s, after) && w.spent[P] < PER[P].budget;
+          var canDn = seg[P].some(function (q) { return q.id === s.id; });
+          html += '<div class="sk' + (lv ? '' : ' zero') + '" data-id="' + s.id + '"><img class="ic" src="' + s.img + '" alt="">' +
+            '<div class="nm"><b>' + esc(s.name) + costTag(cst) + '</b><small>' + esc(lv ? s.lv[lv - 1] : s.desc) + '</small></div>' +
+            '<div class="lv' + (lv === s.max ? ' max' : '') + '">' + lv + '<span> / ' + s.max + '</span>' + (lv > b0 ? '<em>+' + (lv - b0) + '</em>' : '') + '</div>' +
+            '<div class="btns"><button class="dn"' + (canDn ? '' : ' disabled') + ' aria-label="減一級">−</button><button class="up"' + (canUp ? '' : ' disabled') + ' aria-label="加一級">+</button></div></div>';
+        });
+        html += '</div>';
       });
-      var used = E.stageSums(x.cls, E.levelsAt(sim.log, 200));
-      check.innerHTML = v.errors.length
-        ? '<p class="notice rose">⚠ 還不能儲存：<br>' + v.errors.map(esc).join('<br>') + '</p>'
+      html += '</div><div><h3 class="ed-h">這段的加點順序 <span class="muted small">由上往下點</span></h3><ol class="ed-steps">' +
+        (seg[P].length ? '' : '<li class="muted small">還沒有步驟：用左邊的 ＋ 加點</li>') +
+        seg[P].map(function (q, i) {
+          var s = map[q.id].skill, r = simOf[P][i] || {};
+          var range = r.lvStart === undefined ? '—' : (r.lvEnd === undefined || r.lvStart === r.lvEnd ? 'Lv' + r.lvStart : 'Lv' + r.lvStart + '~' + r.lvEnd);
+          var noop = q.to <= (q.from || 0);
+          return '<li data-i="' + i + '"' + (noop ? ' class="noop"' : '') + '><img class="ic" src="' + s.img + '" alt=""><span class="ed-nm">' + esc(s.name) + ' <b>' + (noop ? q.to : (q.from ? q.from + '→' : '') + q.to) + '</b>' +
+            (noop ? '<small>前面已經點到 ' + q.from + ' 級，這步沒有作用，可以刪掉</small>' : '') + '</span>' +
+            '<span class="ed-lv">' + range + '</span><span class="ed-btns"><button class="mu" title="上移">↑</button><button class="md" title="下移">↓</button><button class="del" title="刪除">✕</button></span></li>';
+        }).join('') + '</ol>' +
+        (P > 0 ? '<label class="ed-note">💡 這段的小提示（顯示在加點順序裡）<input id="edNote" value="' + esc(noteVals[P] || '') + '"></label>' : '') +
+        '</div></div>';
+      perEl.innerHTML = html;
+
+      perEl.querySelectorAll('.sk').forEach(function (row) {
+        var id = row.dataset.id;
+        row.querySelector('.up').onclick = function () {
+          saveNote(); var s = seg[P], last = s[s.length - 1];
+          if (last && last.id === id) last.to++; else s.push({ id: id, to: (levelsAfter(P)[id] || 0) + 1 });
+          paint();
+        };
+        row.querySelector('.dn').onclick = function () {
+          saveNote(); var s = seg[P];
+          for (var i = s.length - 1; i >= 0; i--) if (s[i].id === id) { if (s[i].to - 1 > (s[i].from || 0)) s[i].to--; else s.splice(i, 1); break; }
+          paint();
+        };
+      });
+      perEl.querySelectorAll('.ed-steps li[data-i]').forEach(function (li) {
+        var i = +li.dataset.i, s = seg[P];
+        li.querySelector('.mu').onclick = function () { saveNote(); if (i > 0) { var t = s[i]; s[i] = s[i - 1]; s[i - 1] = t; paint(); } };
+        li.querySelector('.md').onclick = function () { saveNote(); if (i < s.length - 1) { var t = s[i]; s[i] = s[i + 1]; s[i + 1] = t; paint(); } };
+        li.querySelector('.del').onclick = function () { saveNote(); s.splice(i, 1); paint(); };
+      });
+
+      var periodBad = PER.map(function (p, k) { return status(k, w.spent).ok ? null : p.name + '：' + status(k, w.spent).txt; }).filter(Boolean);
+      var errs = periodBad.concat(v.errors.filter(function () { return !periodBad.length; }));
+      var used = E.stageSums(cls, E.levelsAt(sim.log, 200));
+      check.innerHTML = errs.length
+        ? '<p class="notice rose">⚠ 還不能儲存：<br>' + errs.map(esc).join('<br>') + '</p>'
         : '<p class="notice ok">✓ 符合遊戲規則。Lv200 時：1轉 ' + used[1] + '、2轉 ' + used[2] + '、3轉 ' + used[3] + '、4轉 ' + used[4] + ' 點</p>';
-      saveBtn.disabled = v.errors.length > 0;
+      saveBtn.disabled = errs.length > 0;
       if (window.App) window.App.conv(body);
     }
-    body.querySelector('#edAdd').onclick = function () { var l = steps[steps.length - 1]; steps.push({ id: l ? l.id : x.cls.stages[1].skills[0].id, to: 1 }); paint(); };
+    function preOk(s, cur) { for (var pid in (s.pre || {})) if ((cur[pid] || 0) < s.pre[pid]) return false; return true; }
+    function costTag(c) { return c ? (c.mp ? '<span class="cost">MP ' + c.mp + '</span>' : '') + (c.hp ? '<span class="cost hp">HP ' + c.hp + '</span>' : '') : ''; }
+    function saveNote() { var n = body.querySelector('#edNote'); if (n) noteVals[P] = n.value.trim(); }
+
     body.querySelector('#edCancel').onclick = function () { window.App.render(); };
     saveBtn.onclick = function () {
+      saveNote();
       var nb = {
         title: body.querySelector('#edTitle').value.trim() || b.title,
         potion: +body.querySelector('#edPotion').value,
@@ -124,7 +205,7 @@
         pros: lines('#edPros'), cons: lines('#edCons'),
         steps: stepsStr(), notes: {}
       };
-      body.querySelectorAll('[data-note]').forEach(function (el) { if (el.value.trim()) nb.notes[el.dataset.note] = el.value.trim(); });
+      for (var k in noteVals) if (noteVals[k]) nb.notes[k] = noteVals[k];
       saveBtn.disabled = true; saveBtn.textContent = '儲存中…';
       saveBuild(x.c.key, x.ver, x.tab, nb, x.c.name + ' ' + x.V.name + ' ' + nb.title).then(function () {
         window.App.toast('已儲存 ✓ 約 1 分鐘後網站更新'); window.App.render();
