@@ -340,3 +340,12 @@ dialog#featDlg .dlg { max-width: none; }
 .sk > .ic, .sk > .lv, .sk > .btns { margin-top: 0; }
 .sk > .sk-more { flex: 0 0 100%; margin: 4px 0 2px; }
 .sk.open .nm small { display: none; }
+
+/* 前置技能標籤 */
+.sk .pre { display: inline-block; margin-top: 2px; font-size: 11.5px; line-height: 1.4; padding: 0 6px; border-radius: 6px; }
+.sk .pre.unmet { color: #fff; background: var(--bad); font-weight: 700; }
+.sk .pre.met { color: color-mix(in srgb, var(--win-ink) 60%, transparent); padding-left: 0; }
+.sk.zero .pre.unmet { opacity: 1; }
+/* 0 級的技能只淡化圖示和文字，前置紅標保持清楚 */
+.sk.zero { opacity: 1; }
+.sk.zero > .ic, .sk.zero .nm b, .sk.zero .nm small, .sk.zero > .lv, .sk.zero .pre.met { opacity: .5; }

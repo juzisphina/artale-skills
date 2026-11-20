@@ -191,7 +191,7 @@
         if (opts.hideZero && !lv) return;
         var eff = lv ? s.lv[lv - 1] : s.desc, cst = lv ? E.cost(s.lv[lv - 1]) : null;
         html += '<div class="sk' + (lv ? '' : ' zero') + (openSkills[s.id] ? ' open' : '') + '" data-id="' + s.id + '"><img class="ic" src="' + s.img + '" alt="">' +
-          '<div class="nm" title="點一下看完整說明"><b>' + esc(s.name) + costTag(cst) + '<i class="more-ic">▾</i></b><small>' + esc(eff) + '</small>' +
+          '<div class="nm" title="點一下看完整說明"><b>' + esc(s.name) + costTag(cst) + '<i class="more-ic">▾</i></b><small>' + esc(eff) + '</small>' + preTag(s, cur, cls) +
           (opts.editable ? '<span class="why"></span>' : '') + '</div>' +
           '<div class="lv' + (lv === s.max ? ' max' : '') + '">' + lv + '<span> / ' + s.max + '</span></div>' +
           (opts.editable ? '<div class="btns"><button class="dn" aria-label="減一級">−</button><button class="up" aria-label="加一級">+</button><button class="mx">滿</button></div>' : '') +
@@ -265,6 +265,19 @@
       go(x.c.key, x.ver, 'sim', {});
     };
   }
+  // 前置技能小標籤：未滿足紅色、已滿足灰色打勾
+  function preTag(s, cur, cls) {
+    var ids = Object.keys(s.pre || {});
+    if (!ids.length) return '';
+    var map = E.index(cls), ok = true;
+    var parts = ids.map(function (id) {
+      var need = s.pre[id], have = cur[id] || 0, met = have >= need;
+      if (!met) ok = false;
+      return (map[id] ? map[id].skill.name : id) + ' ' + (met ? need + ' 級' : have + '/' + need);
+    });
+    return '<span class="pre ' + (ok ? 'met' : 'unmet') + '">' + (ok ? '✓ ' : '🔗 ') + '前置：' + esc(parts.join('、')) + '</span>';
+  }
+
   // ---------- 技能完整說明（點技能名稱展開 / 收起）----------
   var openSkills = {};
   function skillMore(s, lv, cls) {
@@ -380,7 +393,7 @@
         var id = row.dataset.id, wa = E.whyNotAdd(x.cls, s.cur, s.L, id), wr = E.whyNotRemove(x.cls, s.cur, id);
         var up = $('.up', row), dn = $('.dn', row), mx = $('.mx', row);
         up.disabled = !!wa; dn.disabled = !!wr; mx.disabled = !!wa;
-        if (wa && wa !== 'max' && wa !== 'sp') { $('.why', row).textContent = WHY[wa]; }
+        if (wa && wa !== 'max' && wa !== 'sp' && wa !== 'pre') { $('.why', row).textContent = WHY[wa]; }
         up.title = wa ? WHY[wa] : '加一級'; dn.title = wr ? (WHY[wr] || '') : '減一級';
         up.onclick = function () { if (!E.whyNotAdd(x.cls, s.cur, s.L, id)) { s.cur[id] = (s.cur[id] || 0) + 1; commit(); } };
         dn.onclick = function () { if (!E.whyNotRemove(x.cls, s.cur, id)) { s.cur[id]--; if (!s.cur[id]) delete s.cur[id]; commit(); } };
@@ -551,7 +564,7 @@
     box.appendChild(s);
   }
 
-  window.App = { render: render, toast: toast, ensureSkills: ensureSkills, skillMore: skillMore, isOpen: function (id) { return !!openSkills[id]; }, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
+  window.App = { render: render, toast: toast, ensureSkills: ensureSkills, skillMore: skillMore, preTag: preTag, isOpen: function (id) { return !!openSkills[id]; }, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
   $('#adminBtn').onclick = function () { window.Admin.openLogin(); };
   if (window.Admin && window.Admin.on()) window.Admin.loadFresh().then(render); else render();
 })();
