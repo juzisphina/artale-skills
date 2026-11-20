@@ -252,7 +252,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicClaw:11 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:9 magicDrain:20 thunderBolt:30 teleport:20 mentalClarity:20 iceBolt:30 slow:1 iceLightningStrike:30 magicBooster:30 lightningOrb:30 iceLightningResistance:20 iceStorm:30 extremeCasting:11 infinity:15 chainLightning:30 mapleWarrior:10 blizzard:30 iceInferno:5 summonIfritF:30 infinity:30 mapleWarrior:30 genesis:30 iceInferno:30 heroesWill:1 patch_2210002:30 patch_2220000:20 extremeCasting:20 slow:20 magicShield:20 magicArrow:20 magicClaw:20",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "mentalClarity",
+        "name": "精神強化",
+        "img": "img/skills/mentalClarity.png"
+      },
+      {
+        "id": "thunderBolt",
+        "name": "電閃雷鳴",
+        "img": "img/skills/thunderBolt.png"
+      },
+      {
+        "id": "blizzard",
+        "name": "暴風雪",
+        "img": "img/skills/blizzard.png"
+      },
+      {
+        "id": "chainLightning",
+        "name": "閃電連擊",
+        "img": "img/skills/chainLightning.png"
+      }
+    ]
   },
   "Hero": {
     "old": {
