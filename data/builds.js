@@ -33,8 +33,8 @@ window.BUILDS = {
         ],
         "steps": "b_snailThrow:3 b_nimbleFeet:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 holyArrow:10 magicClaw:1 shiningRay:30 magicResistance:1 dispel:3 holySymbol:30 summonHolyDragon:15 magicResistance:20 mysticDoor:20 dispel:20 monsterTransformation:16 heavensDoor:1 mapleWarrior:9 genesis:30 mapleWarrior:10 summonDragon:30 angelRay:30 heavensDoor:5 holyShield:1 infinity:1 resurrection:1 holyShield:20 infinity:15",
         "notes": {
-          "1": "魔力爪點 11 就夠用（越高越耗藍），點數拿去回藍。",
-          "2": "魔力吸收早點滿；瞬間移動等級越高越省藍（60 → 13）。2 轉多出的 11 點回補 1 轉魔力之盾。",
+          "1": "魔力爪點 1 就夠或不加。",
+          "2": "滿群體治療，再滿魔力吸收；多出11點可以分配給10聖箭+1魔力爪（魔力爪打活動怪）。",
           "3": "時空門 20 級耗藍最低；聖龍召喚 15 是為了解鎖召喚神龍。",
           "4": "魚屋需要30核爆1刀+神龍補1刀，小優其他職業。或者一直當活七到145左右，滿神龍再打。"
         },
