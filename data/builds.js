@@ -955,7 +955,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 nimbleBody:10 somersaultKick:20 straightPunch:20 dash:1 nimbleBody:20 hpIncrease:10 mpRecovery:10 knuckleMastery:5 knuckleBooster:20 corkscrewBlow:20 knuckleMastery:20 backspinBlow:20 screwPunch:20 oakBarrel:1 energyCharge:1 energyDrain:20 transformation:1 energyCharge:40 energyBlast:30 shockwave:30 transformation:20 demolition:11 energyBlastPlus:30 dragonLord:30 mapleWarrior:10 finalAttack:1 flashBlast:30 timeLeap:30 flashAssault:30 mapleWarrior:30 finalAttack:20 flashAssaultS:30 finalAttackS:20 patch_5121009:20 heroesWill:1 demolition:20 oakBarrel:10 doubleShotPirate:20 dash:10",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "transformation",
+        "name": "鬥神附體",
+        "img": "img/skills/transformation.png"
+      },
+      {
+        "id": "finalAttack",
+        "name": "鬥神降世",
+        "img": "img/skills/finalAttack.png"
+      },
+      {
+        "id": "finalAttackS",
+        "name": "最終極速",
+        "img": "img/skills/finalAttackS.png"
+      },
+      {
+        "id": "timeLeap",
+        "name": "時間置換",
+        "img": "img/skills/timeLeap.png"
+      }
+    ]
   },
   "Corsair": {
     "old": {
