@@ -869,7 +869,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 haste:3 keenEyes:8 luckySeven:20 haste:20 darkSight:13 shurikenMastery:5 shurikenBooster:6 drain:30 criticalThrow:30 shurikenMastery:20 shurikenBooster:20 recovery:20 booster:1 alchemist:20 windDemonShuriken:30 luckyCharm:5 shadowClone:30 doubleJump:5 luckyCharm:20 shadowWeb:20 mesoAttack:26 expertThrowingStarHandling:30 tripleThrow:30 toxicVenom:30 mapleWarrior:10 ninjaStorm:30 shadowerInstinct:30 mapleWarrior:30 ninjaAmbushNL:30 tauntNL:30 heroesWill:1 mesoAttack:30 doubleJump:20 booster:20 darkSight:20 curse:20 doubleStab:20",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "booster",
+        "name": "速度激發",
+        "img": "img/skills/booster.png"
+      },
+      {
+        "id": "luckyCharm",
+        "name": "幸運術",
+        "img": "img/skills/luckyCharm.png"
+      },
+      {
+        "id": "windDemonShuriken",
+        "name": "風魔手裡劍",
+        "img": "img/skills/windDemonShuriken.png"
+      },
+      {
+        "id": "tripleThrow",
+        "name": "三飛閃",
+        "img": "img/skills/tripleThrow.png"
+      }
+    ]
   },
   "Buccaneer": {
     "old": {
