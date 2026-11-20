@@ -2,7 +2,7 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const root = path.join(__dirname, '..');
 const ctx = vm.createContext({ window: {} });
-for (const f of ['data/skills.js', 'data/builds.js']) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);
+for (const f of ['data/skills.js', 'data/classes.js', 'data/builds.js']) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);
 const { SKILLS, BUILDS, CLASSES, WEAPON_SWAP } = ctx.window;
 const E = require(path.join(root, 'engine.js'));
 let fail = 0;
@@ -12,18 +12,12 @@ for (const c of CLASSES) for (const v of ['old', 'new']) for (const b of ['burn'
   const cls = SKILLS[v][c.key], build = BUILDS[c.key][v][b];
   for (const weapon of c.weapon ? ['sword', 'blunt'] : ['-']) {
     const before = fail;
-    const r = E.simulate(cls, build.steps, weapon === 'blunt' ? WEAPON_SWAP : null);
     const tag = `${c.key}/${v}/${b}${weapon !== '-' ? '/' + weapon : ''}`;
-    r.errors.forEach(e => ok(false, tag + ': ' + e));
-    // 轉職門檻：30、70、120 那一級能點下一轉 = 前面點滿
+    const vr = E.validate(cls, build.steps, weapon === 'blunt' ? WEAPON_SWAP : null), r = vr.sim;
+    vr.errors.forEach(e => ok(false, tag + ': ' + e));
+    for (const k of ['title', 'summary', 'pros', 'cons', 'potion']) ok(build[k] != null && build[k] !== '', tag + ': 缺少 ' + k);
     const at = L => E.stageSums(cls, E.levelsAt(r.log, L));
-    const s29 = at(29), s69 = at(69), s119 = at(119);
-    ok(s29[1] === E.mainSp(cls, 29), `${tag}: Lv29 1轉應用完 ${E.mainSp(cls, 29)}，實際 ${s29[1]}`);
-    ok(s69[1] + s69[2] === E.mainSp(cls, 69), `${tag}: Lv69 點數沒用完`);
-    ok(s119[1] + s119[2] + s119[3] === E.mainSp(cls, 119), `${tag}: Lv119 點數沒用完`);
-    ok(s29[1] + s29[2] === s29[1], `${tag}: Lv29 不該有 2 轉點數`);
     const s200 = at(200), used = s200.slice(1).reduce((a, x) => a + x, 0);
-    ok(used === E.mainSp(cls, 200) || r.steps.every(s => s.lvEnd), `${tag}: Lv200 還有點數沒用`);
     console.log(`${fail > before ? '✗' : '✓'} ${tag}  Lv200 用 ${used}/${E.mainSp(cls, 200)}  4轉:${s200[4]}  步驟:${r.steps.length}`);
   }
 }

@@ -134,8 +134,23 @@
     for (var st = m.stage + 1; st < sums.length; st++) if (sums[st] > 0 && gateNeed(cls, st, sums)) return 'gate';
     return null;
   }
-  // 把等級降低時，超出的點數要怎麼辦：依推薦順序重放到該等級
-  var api = { MAX_LV: MAX_LV, index: index, mainSp: mainSp, beginnerSp: beginnerSp, simulate: simulate, levelsAt: levelsAt, cost: cost,
+  // 完整檢查一套加點（網站編輯器與 npm run check 共用）：回傳 { sim, errors }
+  function validate(cls, stepsStr, swap) {
+    var r = simulate(cls, stepsStr, swap), errors = r.errors.slice();
+    if (!errors.length) {
+      var at = function (L) { return stageSums(cls, levelsAt(r.log, L)); };
+      var s29 = at(29), s69 = at(69), s119 = at(119);
+      if (s29[1] !== mainSp(cls, 29)) errors.push('Lv30 轉職前 1 轉點數沒用完（' + s29[1] + ' / ' + mainSp(cls, 29) + '）');
+      if (s69[1] + s69[2] !== mainSp(cls, 69)) errors.push('Lv70 轉職前 1~2 轉點數沒用完（' + (s69[1] + s69[2]) + ' / ' + mainSp(cls, 69) + '）');
+      if (s119[1] + s119[2] + s119[3] !== mainSp(cls, 119)) errors.push('Lv120 轉職前 1~3 轉點數沒用完（' + (s119[1] + s119[2] + s119[3]) + ' / ' + mainSp(cls, 119) + '）');
+      var s200 = at(200), used = s200[1] + s200[2] + s200[3] + s200[4];
+      var allDone = r.steps.every(function (s) { return s.lvEnd !== undefined; });
+      if (allDone && used < mainSp(cls, 200)) errors.push('步驟全部點完了，但到 Lv200 還剩 ' + (mainSp(cls, 200) - used) + ' 點沒安排');
+    }
+    return { sim: r, errors: errors };
+  }
+
+  var api = { validate: validate, MAX_LV: MAX_LV, index: index, mainSp: mainSp, beginnerSp: beginnerSp, simulate: simulate, levelsAt: levelsAt, cost: cost,
     stageSums: stageSums, budget: budget, gateNeed: gateNeed, whyNotAdd: whyNotAdd, whyNotRemove: whyNotRemove };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.Engine = api;
 })(this);

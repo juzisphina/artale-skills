@@ -196,7 +196,8 @@
     var body = $('#tabBody');
     var err = sim.errors.length ? '<p class="notice rose">⚠ 這套加點有規則問題：' + sim.errors.map(esc).join('；') + '</p>' : '';
     body.innerHTML = err +
-      '<section class="card summary"><h2>' + (x.tab === 'burn' ? '🔥' : '💰') + ' ' + esc(b.title) + ' ' + potion(b.potion) + '</h2><p>' + esc(b.summary) + '</p>' +
+      '<section class="card summary"><h2>' + (x.tab === 'burn' ? '🔥' : '💰') + ' ' + esc(b.title) + ' ' + potion(b.potion) +
+      (window.Admin && window.Admin.on() ? '<button class="btn edit-btn" id="editBuild">✏️ 編輯這套</button>' : '') + '</h2><p>' + esc(b.summary) + '</p>' +
       '<div class="pc"><div class="pro"><b>優點</b><ul>' + b.pros.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>' +
       '<div class="con"><b>缺點</b><ul>' + b.cons.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div></div></section>' +
       '<div class="cols"><section class="card"><h2>📋 技能視窗 <span class="muted">拉到你的等級看該點到哪</span></h2>' + lvPicker(L, 'bv') + '<div id="bvWin"></div>' +
@@ -219,6 +220,7 @@
       paint(v);
       if (commit) history.replaceState(null, '', '#/' + x.c.key + '/' + x.ver + '/' + x.tab + '?lv=' + v);
     });
+    if ($('#editBuild')) $('#editBuild').onclick = function () { window.Admin.edit(x, body); };
     $('#toSim').onclick = function () {
       var cur = E.levelsAt(sim.log, x.L);
       saveSim(x, { L: x.L, cur: cur });
@@ -267,7 +269,9 @@
       '<div class="sim-top"><span class="spleft" id="spLeft"></span><span class="grow"></span>' +
       '<button class="btn" data-apply="burn">套用 🔥 燒錢</button><button class="btn" data-apply="save">套用 💰 省錢</button>' +
       '<button class="btn" id="simReset">清空</button><button class="btn primary" id="simShare">🔗 分享連結</button></div>' +
-      '<div id="smWin"></div></section>';
+      '<div id="smWin"></div></section>' +
+      '<div class="simbar" id="simBar"><button class="lvb" data-d="-1" aria-label="降一級">−</button><span class="sb-lv">Lv <b id="sbLv"></b></span><button class="lvb" data-d="1" aria-label="升一級">＋</button>' +
+      '<span class="sb-sp" id="sbSp"></span><button class="lvb wide" data-d="10">+10 級</button></div>';
 
     function fixToLevel() {
       // 等級降低時，把超出的點數從後面的轉職開始退回
@@ -300,6 +304,9 @@
     }
     function paint() {
       var b = E.budget(x.cls, s.cur, s.L);
+      var left = b.main - b.usedMain, lb = b.beg - b.usedBeg;
+      $('#sbLv').textContent = s.L;
+      $('#sbSp').innerHTML = '剩餘 <b>' + left + '</b> 點' + (lb > 0 ? '・新手 <b>' + lb + '</b>' : '') + (left === 0 && s.L < 200 ? ' <span class="muted small">升級拿更多點 →</span>' : '');
       $('#spLeft').innerHTML = '剩餘 <b>' + (b.main - b.usedMain) + '</b> 點' + (b.beg - b.usedBeg > 0 ? '　新手 <b>' + (b.beg - b.usedBeg) + '</b>' : '') + '　<span class="muted small">已用 ' + b.usedMain + ' / ' + b.main + '</span>';
       $('#smWin').innerHTML = skillWindow(x.cls, s.cur, s.L, { editable: true });
       app.querySelectorAll('#smWin .sk').forEach(function (row) {
@@ -322,6 +329,9 @@
         var r = E.simulate(x.cls, window.BUILDS[x.c.key][x.ver][bt.dataset.apply].steps, swap);
         s.cur = E.levelsAt(r.log, s.L); commit(); toast('已套用到 Lv' + s.L);
       };
+    });
+    app.querySelectorAll('#simBar .lvb').forEach(function (bt) {
+      bt.onclick = function () { var n = $('#smNum'); n.value = Math.max(1, Math.min(200, s.L + +bt.dataset.d)); n.dispatchEvent(new Event('change')); };
     });
     $('#simReset').onclick = function () { s.cur = {}; commit(); };
     $('#simShare').onclick = function () {
@@ -474,5 +484,7 @@
     box.appendChild(s);
   }
 
-  render();
+  window.App = { render: render, toast: toast, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
+  $('#adminBtn').onclick = function () { window.Admin.openLogin(); };
+  if (window.Admin && window.Admin.on()) window.Admin.loadFresh().then(render); else render();
 })();

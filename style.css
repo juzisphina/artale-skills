@@ -214,3 +214,36 @@ dialog::backdrop { background: rgba(30, 20, 10, .4); }
   .tab { min-width: 100px; padding: 8px 10px; }
   .tab b { font-size: 15px; }
 }
+
+/* sticky simulator bar */
+.simbar { position: sticky; bottom: 10px; z-index: 9; display: flex; align-items: center; gap: 10px; margin: -6px auto 16px; padding: 8px 12px;
+  background: var(--ink); color: var(--bg); border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); max-width: 560px; }
+.simbar b { color: var(--accent); font-size: 18px; }
+.simbar .lvb { width: 34px; height: 34px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; font-weight: 900; font-size: 18px; flex: none; }
+.simbar .lvb.wide { width: auto; padding: 0 10px; font-size: 13px; margin-left: auto; }
+.simbar .sb-lv { white-space: nowrap; }
+.simbar .sb-sp { font-size: 14px; }
+.simbar .muted { color: color-mix(in srgb, var(--bg) 70%, transparent); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--soft); text-decoration: underline; font-size: 13px; }
+
+/* admin editor */
+.edit-btn { margin-left: auto; font-size: 13px; }
+.ed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.ed-grid .full { grid-column: 1 / -1; }
+@media (max-width: 560px) { .ed-grid { grid-template-columns: 1fr; } }
+.ed-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--soft); }
+.ed-grid input, .ed-grid select, .ed-grid textarea, .ed-steps select, .ed-steps input {
+  font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; }
+.ed-h { font-size: 16px; margin: 6px 0; }
+.ed-steps { list-style: none; padding: 0; margin: 0 0 10px; }
+.ed-steps li { display: flex; align-items: center; gap: 6px; padding: 5px 0; border-bottom: 1px dashed var(--line); flex-wrap: wrap; }
+.ed-steps .no { width: 22px; font-size: 12px; color: var(--faint); text-align: center; }
+.ed-steps .ed-sk { flex: 1; min-width: 150px; }
+.ed-steps .ed-to { width: 64px; }
+.ed-steps .ed-lv { font-size: 12px; color: var(--soft); min-width: 74px; }
+.ed-btns { display: flex; gap: 3px; }
+.ed-btns button { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--line); background: var(--card); }
+.ed-btns .del:hover { color: var(--bad); border-color: var(--bad); }
+.ed-check { margin-top: 12px; }
+.notice.ok { background: color-mix(in srgb, var(--ok) 15%, var(--card)); }
+.ed-bar { display: flex; gap: 8px; margin-top: 8px; position: sticky; bottom: 10px; background: var(--card); padding: 8px 0; }

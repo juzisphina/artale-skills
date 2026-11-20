@@ -5,3 +5,6 @@ window.GISCUS = {
   category: 'General',
   categoryId: 'DIC_kwDOV1Lrts4DLj8m'
 };
+
+// 管理員編輯：只有這個 GitHub 帳號（有寫入權限）的金鑰能存檔
+window.ADMIN = { owner: 'juzisphina', repo: 'juzisphina/artale-skills', branch: 'main', path: 'data/builds.js' };
