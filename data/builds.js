@@ -377,13 +377,12 @@ window.BUILDS = {
           "劍氣縱橫要扣 HP + MP，紅藍都喝很兇",
           "防禦類技能較晚"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 slashBlast:1 powerStrike:20 slashBlast:20 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:3 swordMastery:3 finalAttackSword:30 swordMastery:20 swordBooster:20 powerReflection:30 threaten:20 ironBody:4 flameChargeSword:1 elementalCharge:30 flameChargeSword:30 iceChargeSword:30 magicCrash:20 shieldMastery:20 mpRecoveryKnight:20 ironBody:5 elementalReinforcement:10 holyChargeSword:20 heavensHammer:30 blast:30 mapleWarrior:30 powerGuard:30 sturdyArmor:30 heroesWill:1 absolutecity:30 ultimateShield:30 ultimateSpear:30",
+        "steps": "b_snailThrow:3 b_nimbleFeet:3 slashBlast:1 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:20 slashBlast:7 hpRecovery:16 hpRestore:8 swordMastery:20 swordBooster:20 threaten:20 powerReflection:30 finalAttackSword:30 slashBlast:8 elementalCharge:3 magicCrash:20 iceChargeSword:1 flameChargeSword:1 lightningChargeSword:1 elementalCharge:30 shieldMastery:1 iceChargeSword:30 flameChargeSword:30 mpRecoveryKnight:20 lightningChargeSword:20 ultimateSpear:1 heavensHammer:1 elementalReinforcement:1",
         "notes": {
           "1": "魔天一擊點 1 解鎖劍氣縱橫（群攻）並點滿。",
-          "2": "精準之劍 3 解鎖終極之劍，直接點滿。",
-          "3": "先點 1 級烈焰之劍開充能，屬性攻擊才能用。",
           "4": "屬性強化需要屬性攻擊 30。"
-        }
+        },
+        "maxLv": 120
       },
       "save": {
         "title": "省錢性價比",
