@@ -72,10 +72,13 @@ window.BUILDS = {
           "前期打怪較慢",
           "天怒、復甦之光比較晚才點"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicClaw:11 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:9 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 magicShield:20 shiningRay:30 dispel:3 holySymbol:30 mysticDoor:20 magicResistance:20 dispel:20 monsterTransformation:16 summonHolyDragon:15 genesis:30 infinity:15 patch_2321011:10 mapleWarrior:10 summonDragon:30 angelRay:30 holyShield:20 resurrection:1 heavensDoor:5 patch_2321012:20 mapleWarrior:30 infinity:30 holyShield:30 heroesWill:1 heavensDoor:30 resurrection:10",
+        "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 holyArrow:10 magicClaw:1 shiningRay:16 magicResistance:1 dispel:3 holySymbol:30 summonHolyDragon:15 monsterTransformation:30 magicResistance:20 mysticDoor:20 dispel:20 heavensDoor:1 patch_2321011:10 patch_2321012:20 genesis:30 mapleWarrior:9 infinity:1 holyShield:1 resurrection:1 summonDragon:30 angelRay:30 heavensDoor:5 infinity:11",
         "notes": {
-          "4": "技改版拿掉了魔法反射，點數改給聖靈祈禱 / 超級神聖祈禱。"
-        }
+          "2": "10聖箭+1魔力爪（魔力爪打活動怪）",
+          "3": "改技後，需要滿喚化術，要把聖光洗掉。",
+          "4": "優先點聖靈祈禱 / 超級神聖祈禱。"
+        },
+        "maxLv": 168
       }
     },
     "featured": [
