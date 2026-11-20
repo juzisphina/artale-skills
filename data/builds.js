@@ -786,14 +786,14 @@ window.BUILDS = {
     },
     "featured": [
       {
-        "id": "savageBlow",
-        "name": "迴旋斬",
-        "img": "img/skills/savageBlow.png"
-      },
-      {
         "id": "booster",
         "name": "速度激發",
         "img": "img/skills/booster.png"
+      },
+      {
+        "id": "savageBlow",
+        "name": "迴旋斬",
+        "img": "img/skills/savageBlow.png"
       },
       {
         "id": "mesoGuardShield",
