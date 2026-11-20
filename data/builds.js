@@ -697,7 +697,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 archeryMastery:3 eyeOfTheAmazon:8 arrowBlow:1 doubleShot:20 criticalShot:20 archeryMastery:12 crossbowMastery:5 crossbowBooster:20 arrowPlatter:20 crossbowMastery:20 finalAttackCrossbow:30 piercingArrow:30 boltBurst:1 puppet:5 summonGoldenEagle:30 strafeBow:30 mortalBlow:5 arrowEruptionCrossbow:30 puppet:20 blizzardCrossbow:30 mortalBlow:11 crossbowExpert:30 piercingArrowMarksman:30 frostprey:30 sharpEyes:30 snipe:10 blind:30 mapleWarrior:30 snipe:30 dragonBreath:30 heroesWill:1 mortalBlow:20 nimbleFeet:20 boltBurst:20 archeryMastery:16 focus:20 arrowBlow:20",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "sharpEyes",
+        "name": "會心之眼",
+        "img": "img/skills/sharpEyes.png"
+      },
+      {
+        "id": "piercingArrowMarksman",
+        "name": "光速神弩",
+        "img": "img/skills/piercingArrowMarksman.png"
+      },
+      {
+        "id": "frostprey",
+        "name": "召喚銀隼",
+        "img": "img/skills/frostprey.png"
+      },
+      {
+        "id": "snipe",
+        "name": "必殺狙擊",
+        "img": "img/skills/snipe.png"
+      }
+    ]
   },
   "Shadower": {
     "old": {
