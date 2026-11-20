@@ -15,7 +15,7 @@ window.BUILDS = {
           "魔力爪 20、聖光 30 每發都比較耗藍",
           "前期幾乎靠喝藍水撐"
         ],
-        "steps": "b_nimbleFeet:3 b_snailThrow:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 holyLight:20 angelBlessing:20 teleport:20 holyArrow:10 magicClaw:1 magicResistance:1 dispel:3 holySymbol:30 shiningRay:30 magicResistance:20 summonHolyDragon:15 dispel:20 mysticDoor:20 monsterTransformation:16 heavensDoor:1 genesis:30 mapleWarrior:10 summonDragon:30 angelRay:30 infinity:15 heavensDoor:5 holyShield:20 resurrection:1",
+        "steps": "b_nimbleFeet:3 b_snailThrow:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 holyLight:20 angelBlessing:20 teleport:20 holyArrow:10 magicClaw:1 magicResistance:1 dispel:3 holySymbol:30 shiningRay:30 magicResistance:20 summonHolyDragon:15 dispel:20 mysticDoor:20 monsterTransformation:16 heavensDoor:1 genesis:30 mapleWarrior:10 summonDragon:30 angelRay:30 infinity:15 heavensDoor:5 holyShield:20 resurrection:1 holyShield:26",
         "notes": {
           "2": "群體治癒先滿打不死系。",
           "3": "聖光一進 3 轉就點滿。",
