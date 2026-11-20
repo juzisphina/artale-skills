@@ -525,7 +525,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 hpRecovery:5 hpBoost:10 slashBlast:1 powerStrike:20 hpRestore:3 slashBlast:20 ironBody:3 hyperBody:20 spearMastery:5 spearBooster:6 finalAttackSpear:30 spearMastery:20 spearBooster:20 holyFire:30 ironBody:4 dragonBusterSpear:30 dragonSpirit:20 dragonSacrifice:3 dragonRoar:30 magicResistance:20 dragonFurySpear:30 powerCrash:18 darkSoul:10 darkSpiritHeal:25 sturdyArmor:10 darkForce:30 darkGuardian:25 powerGuard:30 mapleWarrior:10 patch_1321005:30 sturdyArmor:30 mapleWarrior:30 heroesWill:1 absolutecity:30 ultimateSpear:30 powerCrash:20 dragonSacrifice:30 ironBody:20 hpRecovery:16 hpRestore:8 polearmMastery:20 polearmBooster:20 finalAttackPolearm:30",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "holyFire",
+        "name": "神聖之火",
+        "img": "img/skills/holyFire.png"
+      },
+      {
+        "id": "powerCrash",
+        "name": "力量消除",
+        "img": "img/skills/powerCrash.png"
+      },
+      {
+        "id": "dragonRoar",
+        "name": "龍咆哮",
+        "img": "img/skills/dragonRoar.png"
+      },
+      {
+        "id": "dragonFurySpear",
+        "name": "龍無雙",
+        "img": "img/skills/dragonFurySpear.png"
+      }
+    ]
   },
   "Bowmaster": {
     "old": {
