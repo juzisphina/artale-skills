@@ -614,11 +614,6 @@ window.BUILDS = {
     },
     "featured": [
       {
-        "id": "bombArrow",
-        "name": "炸彈箭",
-        "img": "img/skills/bombArrow.png"
-      },
-      {
         "id": "sharpEyes",
         "name": "會心之眼",
         "img": "img/skills/sharpEyes.png"
@@ -632,6 +627,11 @@ window.BUILDS = {
         "id": "phoenix",
         "name": "召喚鳳凰",
         "img": "img/skills/phoenix.png"
+      },
+      {
+        "id": "concentrate",
+        "name": "念力集中",
+        "img": "img/skills/concentrate.png"
       }
     ]
   },
