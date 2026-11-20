@@ -338,7 +338,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 hpRecovery:5 hpBoost:10 slashBlast:1 powerStrike:20 hpRestore:3 slashBlast:20 ironBody:3 swordMastery:5 swordBooster:6 finalAttackSword:30 swordMastery:20 swordBooster:20 powerReflection:30 rage:20 ironBody:4 combatMastery:1 brandishSword:30 mpRecoveryHero:20 combatMastery:30 shieldMastery:20 panicSword:30 tigerOfFury:21 sturdyArmor:10 advancedCombatMastery:10 powerGuard:30 monsterMagnet:30 mapleWarrior:10 berserk:30 advancedCombatMastery:30 sturdyArmor:30 mapleWarrior:30 heroesWill:1 absolutecity:30 ultimateShield:30 ultimateSpear:30 tigerOfFury:30 guardCancel:20 ironBody:20 hpRecovery:16 hpRestore:8 axeMastery:20 axeBooster:20 finalAttackAxe:30",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "rage",
+        "name": "激勵",
+        "img": "img/skills/rage.png"
+      },
+      {
+        "id": "combatMastery",
+        "name": "鬥氣集中",
+        "img": "img/skills/combatMastery.png"
+      },
+      {
+        "id": "absolutecity",
+        "name": "絕對引力",
+        "img": "img/skills/absolutecity.png"
+      },
+      {
+        "id": "monsterMagnet",
+        "name": "無雙劍舞",
+        "img": "img/skills/monsterMagnet.png"
+      }
+    ]
   },
   "Paladin": {
     "old": {
