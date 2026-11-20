@@ -138,11 +138,61 @@
     body.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // 只改這一套，其他套用 GitHub 上最新的內容，避免蓋掉別處的修改
+  // ---------- 首頁代表技能（4 個圖示）----------
+  function editFeatured(c) {
+    window.App.ensureSkills(c.key).then(function () {
+      var data = window.SKILLS_BY[c.key], seen = {}, all = [];
+      ['new', 'old'].forEach(function (v) {
+        if (!data[v]) return;
+        data[v].stages.forEach(function (st, si) { if (si) st.skills.forEach(function (sk) { if (!seen[sk.id]) { seen[sk.id] = 1; all.push(sk); } }); });
+      });
+      var cur = ((window.BUILDS[c.key] || {}).featured || []).map(function (f) { return f.id; });
+      var d = document.getElementById('featDlg');
+      if (!d) { d = document.createElement('dialog'); d.id = 'featDlg'; document.body.appendChild(d); }
+      function paint() {
+        d.innerHTML = '<div class="dlg feat"><h3>🖼 ' + esc(c.name) + ' 首頁代表技能</h3><p class="muted small">點選 4 個技能（依點選順序顯示）。目前：' + cur.length + ' / 4</p>' +
+          '<div class="feat-grid">' + all.map(function (sk) {
+            var i = cur.indexOf(sk.id);
+            return '<button type="button" class="feat-it' + (i >= 0 ? ' on' : '') + '" data-id="' + sk.id + '" title="' + esc(sk.name) + '"><img class="ic" src="' + sk.img + '" alt="">' +
+              (i >= 0 ? '<b>' + (i + 1) + '</b>' : '') + '<span>' + esc(sk.name) + '</span></button>';
+          }).join('') + '</div><p class="muted small" id="featMsg"></p>' +
+          '<div class="dlg-row"><button type="button" class="ghost" id="featClear">清空</button><span class="grow"></span><button type="button" class="ghost" id="featCancel">取消</button>' +
+          '<button type="button" class="primary" id="featSave"' + (cur.length === 4 ? '' : ' disabled') + '>儲存到網站</button></div></div>';
+        d.querySelectorAll('.feat-it').forEach(function (b) {
+          b.onclick = function () {
+            var i = cur.indexOf(b.dataset.id);
+            if (i >= 0) cur.splice(i, 1); else if (cur.length < 4) cur.push(b.dataset.id);
+            paint();
+          };
+        });
+        d.querySelector('#featClear').onclick = function () { cur = []; paint(); };
+        d.querySelector('#featCancel').onclick = function () { d.close(); };
+        d.querySelector('#featSave').onclick = function () {
+          var btn = this; btn.disabled = true; btn.textContent = '儲存中…';
+          var list = cur.map(function (id) { var sk = all.filter(function (x) { return x.id === id; })[0]; return { id: id, name: sk.name, img: sk.img }; });
+          saveAll(function (B) { B[c.key].featured = list; }, c.name + ' 首頁代表技能').then(function () {
+            d.close(); window.App.toast('已儲存 ✓ 約 1 分鐘後網站更新'); window.App.render();
+          }, function (e) {
+            btn.disabled = false; btn.textContent = '儲存到網站';
+            d.querySelector('#featMsg').textContent = '儲存失敗：' + (e.status === 401 ? '金鑰過期，請重新登入管理員' : e.message);
+          });
+        };
+        window.App.conv(d);
+      }
+      paint();
+      if (!d.open) d.showModal();
+    });
+  }
+  Admin.editFeatured = editFeatured;
+
   function saveBuild(cls, ver, tab, nb, label) {
+    return saveAll(function (all) { all[cls][ver][tab] = nb; }, label);
+  }
+  // 只改需要的部分，其他套用 GitHub 上最新的內容，避免蓋掉別處的修改
+  function saveAll(mutate, label) {
     return gh(API + '?ref=' + A.branch).then(function (j) {
       var all = parseBuilds(b64decode(j.content));
-      all[cls][ver][tab] = nb;
+      mutate(all);
       var src = header() + 'window.BUILDS = ' + JSON.stringify(all, null, 2) + ';\n';
       return gh(API, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },

@@ -250,3 +250,14 @@ dialog::backdrop { background: rgba(30, 20, 10, .4); }
 
 .grp { font-size: 18px; margin: 22px 0 12px; display: flex; align-items: baseline; gap: 8px; }
 .grp .small { font-weight: 400; }
+
+/* featured icons editor */
+.cls-card .icons { align-items: center; }
+.feat-edit { margin-left: auto; border: 1px solid var(--line); background: var(--card); border-radius: 8px; width: 32px; height: 32px; }
+.feat-edit:hover { border-color: var(--accent); }
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); gap: 6px; max-height: 50vh; overflow-y: auto; margin: 8px 0; }
+.feat-it { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border: 2px solid var(--line); border-radius: 10px; background: var(--bg); font-size: 11.5px; line-height: 1.2; }
+.feat-it.on { border-color: var(--accent); background: var(--accent-soft); }
+.feat-it b { position: absolute; top: 2px; right: 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 11px; width: 18px; height: 18px; line-height: 18px; }
+dialog#featDlg { width: min(660px, calc(100% - 32px)); }
+dialog#featDlg .dlg { max-width: none; }

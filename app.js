@@ -104,6 +104,7 @@
 
   // ---------- home ----------
   function renderHome() {
+    var admin = !!(window.Admin && window.Admin.on());
     document.title = 'Artale 技能加點站';
     var html = '<section class="hero"><h1>新角色不用再<b>糾結加點</b></h1>' +
       '<p>每個職業兩套最常見的加法：<b>燒錢快練</b>（藥水換速度）和 <b>省錢性價比</b>（少喝水）。照著 Lv 一步步點，30、70、120 轉職前都會剛好把點數用完。</p>' +
@@ -113,13 +114,19 @@
     groups.forEach(function (g) {
       html += '<h2 class="grp">' + esc(g) + (g === '皇家騎士團' ? ' <span class="muted small">目前只有測試服（技改版）資料</span>' : '') + '</h2><div class="grid">';
       window.CLASSES.filter(function (c) { return c.group === g; }).forEach(function (c) {
+        var feat = (window.BUILDS[c.key] || {}).featured;
+        var icons = feat && feat.length ? feat : c.icons.map(function (src) { return { img: src, name: '' }; });
         html += '<a class="cls-card" href="#/' + c.key + '/' + c.vers[0] + '/burn"><div class="pic"><img src="' + c.img + '" alt="" loading="lazy"></div><div class="body">' +
           '<h3>' + esc(c.name) + '<small>' + c.en + '</small></h3><div class="muted small">' + esc(c.line) + '</div>' +
-          '<div class="icons">' + c.icons.map(function (src) { return '<img class="ic" src="' + src + '" alt="" loading="lazy">'; }).join('') + '</div></div></a>';
+          '<div class="icons">' + icons.map(function (f) { return '<img class="ic" src="' + f.img + '" alt="" title="' + esc(f.name) + '" loading="lazy">'; }).join('') +
+          (admin ? '<button class="feat-edit" data-feat="' + c.key + '" title="更換代表技能">✏️</button>' : '') + '</div></div></a>';
       });
       html += '</div>';
     });
     app.innerHTML = html;
+    app.querySelectorAll('[data-feat]').forEach(function (b) {
+      b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); window.Admin.editFeatured(classOf(b.dataset.feat)); };
+    });
     window.scrollTo(0, 0);
   }
 
@@ -509,7 +516,7 @@
     box.appendChild(s);
   }
 
-  window.App = { render: render, toast: toast, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
+  window.App = { render: render, toast: toast, ensureSkills: ensureSkills, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
   $('#adminBtn').onclick = function () { window.Admin.openLogin(); };
   if (window.Admin && window.Admin.on()) window.Admin.loadFresh().then(render); else render();
 })();
