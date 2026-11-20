@@ -413,11 +413,12 @@ window.BUILDS = {
         "cons": [
           "祝福護甲、魔力恢復很晚才點，喝水多"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 slashBlast:1 powerStrike:20 slashBlast:20 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:3 swordMastery:3 finalAttackSword:30 swordMastery:20 swordBooster:20 powerReflection:30 threaten:20 ironBody:4 flameChargeBluntWeapon:1 elementalCharge:30 iceChargeBluntWeapon:30 flameChargeBluntWeapon:30 magicCrash:20 shieldMastery:20 patch_1210016:20 mpRecoveryKnight:1 elementalReinforcement:20 holyChargeBlunt:20 patch_1220000:20 heavensHammer:30 blast:30 mapleWarrior:30 powerGuard:30 patch_1221005:30 heroesWill:1 absolutecity:30 mpRecoveryKnight:20 ultimateSpear:30",
+        "steps": "b_snailThrow:3 b_nimbleFeet:3 slashBlast:1 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:20 hpRecovery:16 hpRestore:8 slashBlast:7 swordMastery:20 swordBooster:20 threaten:20 powerReflection:30 finalAttackSword:30 slashBlast:8 magicCrash:20 patch_1210016:1 elementalCharge:1 iceChargeBluntWeapon:1 flameChargeBluntWeapon:1 lightningChargeBluntWeapon:1 patch_1210016:20 mpRecoveryKnight:20 elementalCharge:30 iceChargeBluntWeapon:30 flameChargeBluntWeapon:30 ultimateSpear:1 holyChargeBlunt:1 elementalReinforcement:1",
         "notes": {
           "3": "技改版屬性衝擊劍棍共用，一次只能開一種。",
           "4": "聖靈之棍技改後劍騎也能用（屬性衝擊系列）。"
-        }
+        },
+        "maxLv": 120
       },
       "save": {
         "title": "省錢性價比",
