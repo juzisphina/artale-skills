@@ -159,22 +159,24 @@
           var lv = after[s.id] || 0, b0 = before[s.id] || 0, cst = lv ? E.cost(s.lv[lv - 1]) : null;
           var canUp = lv < s.max && preOk(s, after) && w.spent[P] < PER[P].budget;
           var canDn = seg[P].some(function (q) { return q.id === s.id; });
-          html += '<div class="sk' + (lv ? '' : ' zero') + '" data-id="' + s.id + '"><img class="ic" src="' + s.img + '" alt="">' +
+          html += '<div class="sk' + (lv ? '' : ' zero') + '" data-id="' + s.id + '" draggable="true" title="拖到右邊的加點順序"><img class="ic" src="' + s.img + '" alt="" draggable="false">' +
             '<div class="nm"><b>' + esc(s.name) + costTag(cst) + '</b><small>' + esc(lv ? s.lv[lv - 1] : s.desc) + '</small></div>' +
             '<div class="lv' + (lv === s.max ? ' max' : '') + '">' + lv + '<span> / ' + s.max + '</span>' + (lv > b0 ? '<em>+' + (lv - b0) + '</em>' : '') + '</div>' +
             '<div class="btns"><button class="dn"' + (canDn ? '' : ' disabled') + ' aria-label="減一級">−</button><button class="up"' + (canUp ? '' : ' disabled') + ' aria-label="加一級">+</button></div></div>';
         });
         html += '</div>';
       });
-      html += '</div><div><h3 class="ed-h">這段的加點順序 <span class="muted small">由上往下點</span></h3><ol class="ed-steps">' +
-        (seg[P].length ? '' : '<li class="muted small">還沒有步驟：用左邊的 ＋ 加點</li>') +
+      html += '</div><div><h3 class="ed-h">這段的加點順序 <span class="muted small">由上往下點・可把左邊技能拖進來、步驟可拖動排序</span></h3><p class="ed-flash" id="edFlash"></p><ol class="ed-steps">' +
+        (seg[P].length ? '' : '<li class="ed-empty muted small">還沒有步驟：把左邊的技能拖到這裡，或按 ＋</li>') +
         seg[P].map(function (q, i) {
           var s = map[q.id].skill, r = simOf[P][i] || {};
           var range = r.lvStart === undefined ? '—' : (r.lvEnd === undefined || r.lvStart === r.lvEnd ? 'Lv' + r.lvStart : 'Lv' + r.lvStart + '~' + r.lvEnd);
           var noop = q.to <= (q.from || 0);
-          return '<li data-i="' + i + '"' + (noop ? ' class="noop"' : '') + '><img class="ic" src="' + s.img + '" alt=""><span class="ed-nm">' + esc(s.name) + ' <b>' + (noop ? q.to : (q.from ? q.from + '→' : '') + q.to) + '</b>' +
+          var full = w.spent[P] >= PER[P].budget;
+          return '<li data-i="' + i + '" draggable="true"' + (noop ? ' class="noop"' : '') + '><span class="grip" title="拖動排序">⋮⋮</span><img class="ic" src="' + s.img + '" alt="" draggable="false"><span class="ed-nm">' + esc(s.name) + ' <b>' + (noop ? q.to : (q.from ? q.from + '→' : '') + q.to) + '</b>' +
             (noop ? '<small>前面已經點到 ' + q.from + ' 級，這步沒有作用，可以刪掉</small>' : '') + '</span>' +
-            '<span class="ed-lv">' + range + '</span><span class="ed-btns"><button class="mu" title="上移">↑</button><button class="md" title="下移">↓</button><button class="del" title="刪除">✕</button></span></li>';
+            '<span class="ed-lv">' + range + '</span><span class="ed-btns"><button class="tm" title="這步少點一級">−</button><button class="tp" title="這步多點一級"' + (full || q.to >= s.max ? ' disabled' : '') + '>＋</button>' +
+            '<button class="mu" title="上移">↑</button><button class="md" title="下移">↓</button><button class="del" title="刪除">✕</button></span></li>';
         }).join('') + '</ol>' +
         (P > 0 ? '<label class="ed-note">💡 這段的小提示（顯示在加點順序裡）<input id="edNote" value="' + esc(noteVals[P] || '') + '"></label>' : '') +
         '</div></div>';
@@ -200,6 +202,57 @@
         li.querySelector('.mu').onclick = function () { saveNote(); if (i > 0) { var t = s[i]; s[i] = s[i - 1]; s[i - 1] = t; paint(); } };
         li.querySelector('.md').onclick = function () { saveNote(); if (i < s.length - 1) { var t = s[i]; s[i] = s[i + 1]; s[i + 1] = t; paint(); } };
         li.querySelector('.del').onclick = function () { saveNote(); s.splice(i, 1); paint(); };
+        li.querySelector('.tp').onclick = function () { saveNote(); s[i].to++; paint(); };
+        li.querySelector('.tm').onclick = function () { saveNote(); if (s[i].to - 1 > (s[i].from || 0)) s[i].to--; else s.splice(i, 1); paint(); };
+      });
+
+      // ----- 拖放：左邊技能拖進來 = 在那個位置加一級；右邊步驟拖動 = 換順序 -----
+      var list = perEl.querySelector('.ed-steps'), drag = null;
+      function rows() { return [].slice.call(list.querySelectorAll('li[data-i]')); }
+      function dropIndex(ev) {
+        var r = rows();
+        for (var k = 0; k < r.length; k++) { var b = r[k].getBoundingClientRect(); if (ev.clientY < b.top + b.height / 2) return k; }
+        return r.length;
+      }
+      function clearMark() { list.classList.remove('drop-on'); rows().forEach(function (li) { li.classList.remove('drop-before', 'drop-after'); }); }
+      function mark(idx) {
+        clearMark(); var r = rows();
+        if (!r.length) list.classList.add('drop-on');
+        else if (idx < r.length) r[idx].classList.add('drop-before'); else r[r.length - 1].classList.add('drop-after');
+      }
+      function flash(msg) { var f = perEl.querySelector('#edFlash'); f.textContent = msg; if (window.App) window.App.conv(f); clearTimeout(flash.t); flash.t = setTimeout(function () { f.textContent = ''; }, 2500); }
+      function insertSkill(id, idx) {
+        var s = seg[P], sk = map[id].skill;
+        if (walk().spent[P] >= PER[P].budget) return flash('這段的點數已經用完了，先減掉別的技能再加。');
+        var lv = before[id] || 0;
+        for (var k = 0; k < idx; k++) if (s[k].id === id && s[k].to > lv) lv = s[k].to;
+        if (lv >= sk.max) return flash(sk.name + ' 在這個位置已經滿級了。');
+        saveNote();
+        if (idx > 0 && s[idx - 1].id === id) s[idx - 1].to++;
+        else s.splice(idx, 0, { id: id, to: lv + 1 });
+        // 後面同一個技能的步驟也往上推一級，讓總點數真的 +1
+        for (var j = idx + 1; j < s.length; j++) if (s[j].id === id && s[j].to > lv && s[j].to < sk.max) s[j].to++;
+        paint();
+      }
+      function moveStep(from, to) {
+        saveNote(); var s = seg[P], it = s.splice(from, 1)[0];
+        if (to > from) to--;
+        s.splice(to, 0, it); paint();
+      }
+      perEl.querySelectorAll('.sk[draggable]').forEach(function (row) {
+        row.addEventListener('dragstart', function (e) { drag = { type: 'skill', id: row.dataset.id }; e.dataTransfer.effectAllowed = 'copy'; e.dataTransfer.setData('text/plain', row.dataset.id); row.classList.add('dragging'); });
+        row.addEventListener('dragend', function () { drag = null; row.classList.remove('dragging'); clearMark(); });
+      });
+      rows().forEach(function (li) {
+        li.addEventListener('dragstart', function (e) { drag = { type: 'step', i: +li.dataset.i }; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', 'step'); li.classList.add('dragging'); });
+        li.addEventListener('dragend', function () { drag = null; li.classList.remove('dragging'); clearMark(); });
+      });
+      list.addEventListener('dragover', function (e) { if (!drag) return; e.preventDefault(); e.dataTransfer.dropEffect = drag.type === 'skill' ? 'copy' : 'move'; mark(dropIndex(e)); });
+      list.addEventListener('dragleave', function (e) { if (!list.contains(e.relatedTarget)) clearMark(); });
+      list.addEventListener('drop', function (e) {
+        if (!drag) return; e.preventDefault();
+        var idx = dropIndex(e), d = drag; drag = null; clearMark();
+        if (d.type === 'skill') insertSkill(d.id, idx); else moveStep(d.i, idx);
       });
 
       var periodBad = PER.map(function (p, k) { return status(k, w.spent).ok ? null : p.name + '：' + status(k, w.spent).txt; }).filter(Boolean);

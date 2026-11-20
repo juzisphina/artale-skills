@@ -299,3 +299,19 @@ dialog#featDlg .dlg { max-width: none; }
 .ed-lvset .mile button { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 2px 9px; font-size: 13px; }
 .ed-lvset .mile button.on { border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .ed-tab.off { opacity: .45; }
+
+/* editor drag & drop */
+#edPeriod .sk[draggable] { cursor: grab; }
+#edPeriod .sk.dragging, .ed-steps li.dragging { opacity: .45; }
+.ed-steps { min-height: 60px; border-radius: 10px; transition: background .15s; }
+.ed-steps.drop-on { background: var(--accent-soft); outline: 2px dashed var(--accent); }
+.ed-steps li[draggable] { cursor: grab; }
+.ed-steps li.drop-before { box-shadow: inset 0 3px 0 var(--accent); }
+.ed-steps li.drop-after { box-shadow: inset 0 -3px 0 var(--accent); }
+.ed-steps .grip { color: var(--faint); font-size: 12px; letter-spacing: -2px; width: 12px; flex: none; }
+.ed-steps .ed-empty { padding: 18px 8px; justify-content: center; border: 2px dashed var(--line); border-radius: 10px; }
+.ed-btns .tp, .ed-btns .tm { font-weight: 900; color: var(--accent-ink); }
+.ed-btns button:disabled { opacity: .35; }
+.ed-flash { margin: 0 0 6px; min-height: 0; color: var(--bad); font-size: 13px; font-weight: 700; }
+.ed-flash:empty { display: none; }
+.ed-steps li[draggable], #edPeriod .sk[draggable] { -webkit-user-select: none; user-select: none; }
