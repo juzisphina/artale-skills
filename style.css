@@ -261,3 +261,8 @@ dialog::backdrop { background: rgba(30, 20, 10, .4); }
 .feat-it b { position: absolute; top: 2px; right: 4px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 11px; width: 18px; height: 18px; line-height: 18px; }
 dialog#featDlg { width: min(660px, calc(100% - 32px)); }
 dialog#featDlg .dlg { max-width: none; }
+
+/* 卡片等高、技能圖示固定貼底，名字長短不影響對齊 */
+.cls-card { display: flex; flex-direction: column; }
+.cls-card .body { flex: 1; display: flex; flex-direction: column; }
+.cls-card .icons { margin-top: auto; padding-top: 8px; }
