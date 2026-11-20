@@ -143,7 +143,9 @@
       seg.forEach(function (s, k) { simOf[k] = s.map(function () { return sim.steps[idx++] || {}; }); });
       tabsEl.innerHTML = PER.map(function (p, k) {
         var st = status(k, w.spent);
-        return '<button class="ed-tab' + (k === P ? ' on' : '') + (st.ok ? ' ok' : ' bad') + (p.reach ? '' : ' off') + '" data-p="' + k + '"><b>' + (st.ok ? '✓ ' : '⚠ ') + p.name + '</b><span>' + p.range + '</span></button>';
+        var left = p.reach ? Math.max(0, p.budget - w.spent[k]) : 0;
+        return '<button class="ed-tab' + (k === P ? ' on' : '') + (st.ok ? ' ok' : ' bad') + (p.reach ? '' : ' off') + (st.ok && left ? ' left' : '') + '" data-p="' + k + '"><b>' + (st.ok ? '✓ ' : '⚠ ') + p.name + '</b><span>' + p.range +
+          (st.ok && left ? '<em>・剩 ' + left + ' 點</em>' : '') + '</span></button>';
       }).join('');
       tabsEl.querySelectorAll('.ed-tab').forEach(function (t) { t.onclick = function () { saveNote(); P = +t.dataset.p; paint(); }; });
 
@@ -257,10 +259,14 @@
 
       var periodBad = PER.map(function (p, k) { return status(k, w.spent).ok ? null : p.name + '：' + status(k, w.spent).txt; }).filter(Boolean);
       var errs = periodBad.concat(v.errors.filter(function () { return !periodBad.length; }));
-      var used = E.stageSums(cls, E.levelsAt(sim.log, 200));
+      var used = E.stageSums(cls, E.levelsAt(sim.log, M));
+      var unspent = PER.reduce(function (a, p, k) { return a + (p.reach ? Math.max(0, p.budget - w.spent[k]) : 0); }, 0);
+      var leftNote = unspent ? '<br><b class="warn">⚠ 到 Lv' + M + ' 還有 ' + unspent + ' 點沒安排</b>（' +
+        PER.map(function (p, k) { var l = p.reach ? Math.max(0, p.budget - w.spent[k]) : 0; return l ? p.name + ' 剩 ' + l : ''; }).filter(Boolean).join('、') +
+        '）。可以儲存，網頁上會提醒玩家這些點還沒分配。' : '';
       check.innerHTML = errs.length
         ? '<p class="notice rose">⚠ 還不能儲存：<br>' + errs.map(esc).join('<br>') + '</p>'
-        : '<p class="notice ok">✓ 符合遊戲規則。Lv200 時：1轉 ' + used[1] + '、2轉 ' + used[2] + '、3轉 ' + used[3] + '、4轉 ' + used[4] + ' 點</p>';
+        : '<p class="notice ' + (unspent ? 'warn' : 'ok') + '">✓ 符合遊戲規則。Lv' + M + ' 時：1轉 ' + used[1] + '、2轉 ' + used[2] + '、3轉 ' + used[3] + '、4轉 ' + used[4] + ' 點' + leftNote + '</p>';
       saveBtn.disabled = errs.length > 0;
       if (window.App) window.App.conv(body);
     }

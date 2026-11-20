@@ -181,7 +181,10 @@
       else if (si < 4) {
         var need = cls.req[si - 1], total = 0; for (var k = 1; k <= si; k++) total += sums[k];
         spTag = '<span class="sp ' + (total >= need ? 'done' : (L >= [0, 30, 70, 120][si] ? 'need' : '')) + '" title="下一轉需要 1~' + si + ' 轉合計 ' + need + ' 點">' + (total >= need ? '✓ ' : '') + '累計 ' + total + ' / ' + need + '</span>';
-      } else spTag = '<span class="sp">' + sums[4] + ' 點</span>';
+      } else {
+        var have4 = L >= 120 ? E.mainSp(cls, L) - cls.req[2] : 0;
+        spTag = '<span class="sp ' + (L >= 120 ? (sums[4] >= have4 ? 'done' : 'need') : '') + '" title="4 轉可用點數">' + sums[4] + (L >= 120 ? ' / ' + have4 : '') + ' 點' + (L >= 120 && sums[4] < have4 ? '・剩 ' + (have4 - sums[4]) : '') + '</span>';
+      }
       html += '<div class="win' + (locked ? ' locked' : '') + '"><div class="win-h">' + esc(stageLabel(st.name)) + (locked ? ' 🔒' : '') + spTag + '</div>';
       st.skills.forEach(function (s) {
         var lv = cur[s.id] || 0;
@@ -231,7 +234,7 @@
     var body = $('#tabBody');
     var err = sim.errors.length ? '<p class="notice rose">⚠ 這套加點有規則問題：' + sim.errors.map(esc).join('；') + '</p>' : '';
     body.innerHTML = err +
-      '<section class="card summary"><h2>' + (x.tab === 'burn' ? '🔥' : '💰') + ' ' + esc(b.title) + ' ' + potion(b.potion) + (M < 200 ? ' <span class="chip ref">📌 參照 Lv' + M + '</span>' : '') +
+      '<section class="card summary"><h2>' + (x.tab === 'burn' ? '🔥' : '💰') + ' ' + esc(b.title) + ' ' + potion(b.potion) + (M < 200 ? ' <span class="chip ref">📌 參照 Lv' + M + (unspentAt(x.cls, sim, M) ? '・還有 ' + unspentAt(x.cls, sim, M) + ' 點未分配' : '') + '</span>' : '') +
       (window.Admin && window.Admin.on() ? '<button class="btn edit-btn" id="editBuild">✏️ 編輯這套</button>' : '') + '</h2><p>' + esc(b.summary) + '</p>' +
       '<div class="pc"><div class="pro"><b>優點</b><ul>' + b.pros.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>' +
       '<div class="con"><b>缺點</b><ul>' + b.cons.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div></div></section>' +
@@ -261,6 +264,11 @@
       saveSim(x, { L: x.L, cur: cur });
       go(x.c.key, x.ver, 'sim', {});
     };
+  }
+  // 參照等級 M 時還沒分配的點數（新手 + 1~4 轉）
+  function unspentAt(cls, sim, M) {
+    var b = E.budget(cls, E.levelsAt(sim.log, M), M);
+    return Math.max(0, b.main - b.usedMain) + Math.max(0, b.beg - b.usedBeg);
   }
   function stepsHtml(x, sim, b) {
     var map = E.index(x.cls), h = '', lastStage = -1;

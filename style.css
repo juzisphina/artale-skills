@@ -315,3 +315,7 @@ dialog#featDlg .dlg { max-width: none; }
 .ed-flash { margin: 0 0 6px; min-height: 0; color: var(--bad); font-size: 13px; font-weight: 700; }
 .ed-flash:empty { display: none; }
 .ed-steps li[draggable], #edPeriod .sk[draggable] { -webkit-user-select: none; user-select: none; }
+.notice.warn { background: color-mix(in srgb, var(--accent) 16%, var(--card)); }
+.notice b.warn { color: var(--accent-ink); }
+.ed-tab.left b { color: var(--accent-ink); }
+.ed-tab em { font-style: normal; font-weight: 700; color: var(--accent-ink); }
