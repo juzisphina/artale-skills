@@ -6,14 +6,12 @@ window.BUILDS = {
       "burn": {
         "title": "燒錢快練",
         "potion": 5,
-        "summary": "攻擊技能先點滿，不點魔力吸收，用藥水換速度。適合藥水錢不心疼、想最快衝等的人。",
+        "summary": "適合藥水錢不心疼、想最快衝等的人。",
         "pros": [
-          "每個階段的主力攻擊最早點滿",
-          "3 轉聖光、4 轉核爆最快成形"
+          "每個階段的主力攻擊最早點滿"
         ],
         "cons": [
-          "魔力爪 20、聖光 30 每發都比較耗藍",
-          "前期幾乎靠喝藍水撐"
+          "前期需要當活七沖等上來"
         ],
         "steps": "b_nimbleFeet:3 b_snailThrow:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 holyLight:20 angelBlessing:20 teleport:20 holyArrow:10 magicClaw:1 magicResistance:1 dispel:3 holySymbol:30 shiningRay:30 magicResistance:20 summonHolyDragon:15 dispel:20 mysticDoor:20 monsterTransformation:16 heavensDoor:1 mapleWarrior:10 heavensDoor:30 infinity:30 genesis:30 angelRay:30 summonDragon:15 holyShield:1 resurrection:1",
         "notes": {
