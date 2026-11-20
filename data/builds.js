@@ -15,11 +15,11 @@ window.BUILDS = {
           "魔力爪 20、聖光 30 每發都比較耗藍",
           "前期幾乎靠喝藍水撐"
         ],
-        "steps": "b_nimbleFeet:3 b_snailThrow:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 holyLight:20 angelBlessing:20 teleport:20 holyArrow:10 magicClaw:1 magicResistance:1 dispel:3 holySymbol:30 shiningRay:30 magicResistance:20 summonHolyDragon:15 dispel:20 mysticDoor:20 monsterTransformation:16 heavensDoor:1 mapleWarrior:10 heavensDoor:30 infinity:30 genesis:30 angelRay:30 holyShield:15 resurrection:1 summonDragon:1",
+        "steps": "b_nimbleFeet:3 b_snailThrow:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 holyLight:20 angelBlessing:20 teleport:20 holyArrow:10 magicClaw:1 magicResistance:1 dispel:3 holySymbol:30 shiningRay:30 magicResistance:20 summonHolyDragon:15 dispel:20 mysticDoor:20 monsterTransformation:16 heavensDoor:1 mapleWarrior:10 heavensDoor:30 infinity:30 genesis:30 angelRay:30 summonDragon:15 holyShield:1 resurrection:1",
         "notes": {
           "2": "群體治癒先滿打不死系。",
-          "3": "聖光一進 3 轉就點滿。",
-          "4": "核爆術最先滿，召喚神龍、天使之箭接著補。"
+          "3": "優先祈禱當活七/戰七",
+          "4": "先天怒1當活七，活七到天怒滿，尻骨龍，之後核爆/天神箭/神龍"
         },
         "maxLv": 168
       },
