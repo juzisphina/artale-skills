@@ -73,7 +73,7 @@ window.BUILDS = {
           "前期打怪較慢",
           "天怒、復甦之光比較晚才點"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 holyArrow:10 magicClaw:1 shiningRay:16 magicResistance:1 dispel:3 holySymbol:30 summonHolyDragon:15 monsterTransformation:30 magicResistance:20 mysticDoor:20 dispel:20 heavensDoor:1 patch_2321011:10 patch_2321012:20 genesis:30 mapleWarrior:9 infinity:1 holyShield:1 resurrection:1 summonDragon:30 angelRay:30 heavensDoor:5 infinity:11",
+        "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 holyArrow:10 magicClaw:1 shiningRay:16 magicResistance:1 dispel:3 holySymbol:30 summonHolyDragon:15 monsterTransformation:30 magicResistance:20 mysticDoor:20 dispel:20 heavensDoor:1 patch_2321011:10 patch_2321012:20 genesis:30 mapleWarrior:9 summonDragon:30 angelRay:30 infinity:1 holyShield:1 resurrection:1 heavensDoor:5 infinity:11",
         "notes": {
           "2": "10聖箭+1魔力爪（魔力爪打活動怪）",
           "3": "改技後，需要滿喚化術，要把聖光洗掉。",
