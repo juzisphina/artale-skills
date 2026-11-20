@@ -35,7 +35,7 @@ window.BUILDS = {
         "cons": [
           "1 轉魔力爪只點 11，前期打怪比較慢"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicClaw:11 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:9 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 magicShield:20 shiningRay:30 dispel:3 holySymbol:30 mysticDoor:20 magicResistance:20 dispel:20 monsterTransformation:16 summonHolyDragon:15 genesis:30 infinity:15 mapleWarrior:10 summonDragon:30 angelRay:30 holyShield:20 resurrection:1 heavensDoor:5 mapleWarrior:30 infinity:30 holyShield:30 heroesWill:1 heavensDoor:30 resurrection:10 magicReflect:30",
+        "steps": "b_snailThrow:3 b_nimbleFeet:3 magicArrow:1 magicClaw:11 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:9 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 magicShield:20 shiningRay:30 dispel:3 holySymbol:30 mysticDoor:20 magicResistance:20 dispel:20 monsterTransformation:16 summonHolyDragon:15 genesis:30 infinity:15 mapleWarrior:10 summonDragon:30 angelRay:30 holyShield:20 resurrection:1 heavensDoor:5 mapleWarrior:30 infinity:30 holyShield:30 heroesWill:1 heavensDoor:30 resurrection:10 magicReflect:30",
         "notes": {
           "1": "魔力爪點 11 就夠用（越高越耗藍），點數拿去回藍。",
           "2": "魔力吸收早點滿；瞬間移動等級越高越省藍（60 → 13）。2 轉多出的 11 點回補 1 轉魔力之盾。",
