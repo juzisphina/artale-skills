@@ -190,12 +190,12 @@
         var lv = cur[s.id] || 0;
         if (opts.hideZero && !lv) return;
         var eff = lv ? s.lv[lv - 1] : s.desc, cst = lv ? E.cost(s.lv[lv - 1]) : null;
-        html += '<div class="sk' + (lv ? '' : ' zero') + '" data-id="' + s.id + '"><img class="ic" src="' + s.img + '" alt="">' +
-          '<div class="nm"><b>' + esc(s.name) + costTag(cst) + '</b><small title="' + esc(eff) + '">' + esc(eff) + '</small>' +
+        html += '<div class="sk' + (lv ? '' : ' zero') + (openSkills[s.id] ? ' open' : '') + '" data-id="' + s.id + '"><img class="ic" src="' + s.img + '" alt="">' +
+          '<div class="nm" title="點一下看完整說明"><b>' + esc(s.name) + costTag(cst) + '<i class="more-ic">▾</i></b><small>' + esc(eff) + '</small>' +
           (opts.editable ? '<span class="why"></span>' : '') + '</div>' +
           '<div class="lv' + (lv === s.max ? ' max' : '') + '">' + lv + '<span> / ' + s.max + '</span></div>' +
           (opts.editable ? '<div class="btns"><button class="dn" aria-label="減一級">−</button><button class="up" aria-label="加一級">+</button><button class="mx">滿</button></div>' : '') +
-          '</div>';
+          skillMore(s, lv, cls) + '</div>';
       });
       html += '</div>';
     });
@@ -265,6 +265,29 @@
       go(x.c.key, x.ver, 'sim', {});
     };
   }
+  // ---------- 技能完整說明（點技能名稱展開 / 收起）----------
+  var openSkills = {};
+  function skillMore(s, lv, cls) {
+    var map = E.index(cls), rows = [];
+    function row(label, text) { if (text) rows.push('<div class="mr"><span>' + label + '</span><p>' + esc(text) + '</p></div>'); }
+    rows.push('<div class="mr"><span>說明</span><p>' + esc(s.desc) + '</p></div>');
+    if (lv) row('目前 Lv' + lv, s.lv[lv - 1]);
+    if (lv < s.max) row((lv ? '下一級' : '學 1 級') + ' Lv' + (lv + 1), s.lv[lv]);
+    if (s.max > lv + 1) row('滿級 Lv' + s.max, s.lv[s.max - 1]);
+    var pre = Object.keys(s.pre || {}).map(function (id) { return (map[id] ? map[id].skill.name : id) + ' ' + s.pre[id] + ' 級'; });
+    if (pre.length) rows.push('<div class="mr"><span>前置</span><p>' + esc(pre.join('、')) + '</p></div>');
+    if (s.req > 1) rows.push('<div class="mr"><span>需求</span><p>角色 Lv' + s.req + ' 以上</p></div>');
+    (s.note || []).forEach(function (n) { rows.push('<div class="mr warn"><span>注意</span><p>' + esc(n) + '</p></div>'); });
+    return '<div class="sk-more">' + rows.join('') + '</div>';
+  }
+  document.addEventListener('click', function (e) {
+    var nm = e.target.closest && e.target.closest('.sk .nm');
+    if (!nm || e.target.closest('button, input, a')) return;
+    var rowEl = nm.closest('.sk'), id = rowEl.getAttribute('data-id');
+    openSkills[id] = !openSkills[id];
+    rowEl.classList.toggle('open', !!openSkills[id]);
+  });
+
   // 參照等級 M 時還沒分配的點數（新手 + 1~4 轉）
   function unspentAt(cls, sim, M) {
     var b = E.budget(cls, E.levelsAt(sim.log, M), M);
@@ -528,7 +551,7 @@
     box.appendChild(s);
   }
 
-  window.App = { render: render, toast: toast, ensureSkills: ensureSkills, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
+  window.App = { render: render, toast: toast, ensureSkills: ensureSkills, skillMore: skillMore, isOpen: function (id) { return !!openSkills[id]; }, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
   $('#adminBtn').onclick = function () { window.Admin.openLogin(); };
   if (window.Admin && window.Admin.on()) window.Admin.loadFresh().then(render); else render();
 })();

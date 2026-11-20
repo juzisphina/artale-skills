@@ -319,3 +319,24 @@ dialog#featDlg .dlg { max-width: none; }
 .notice b.warn { color: var(--accent-ink); }
 .ed-tab.left b { color: var(--accent-ink); }
 .ed-tab em { font-style: normal; font-weight: 700; color: var(--accent-ink); }
+
+/* 技能完整說明：點名稱展開 */
+.sk { flex-wrap: nowrap; align-items: flex-start; }
+.sk > .ic, .sk > .lv, .sk > .btns { margin-top: 2px; }
+.sk .nm { cursor: pointer; }
+.sk .more-ic { font-style: normal; font-size: 11px; margin-left: 6px; opacity: .55; display: inline-block; transition: transform .15s; }
+.sk.open .more-ic { transform: rotate(180deg); }
+.sk.open .nm small { white-space: normal; overflow: visible; }
+.sk-more { display: none; margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: color-mix(in srgb, var(--card) 70%, transparent); border: 1px solid var(--win-line); font-size: 12.5px; line-height: 1.55; color: var(--ink); }
+.sk.open .sk-more { display: block; }
+.sk.zero.open { opacity: 1; }
+.sk-more .mr { display: flex; gap: 8px; padding: 3px 0; border-top: 1px dashed var(--line); }
+.sk-more .mr:first-child { border-top: 0; }
+.sk-more .mr span { flex: none; min-width: 62px; font-weight: 700; color: var(--accent-ink); }
+.sk-more .mr p { margin: 0; white-space: normal; }
+.sk-more .mr.warn span, .sk-more .mr.warn p { color: var(--bad); }
+/* 說明面板放在整列下方、佔滿寬度 */
+.sk { flex-wrap: wrap; align-items: center; }
+.sk > .ic, .sk > .lv, .sk > .btns { margin-top: 0; }
+.sk > .sk-more { flex: 0 0 100%; margin: 4px 0 2px; }
+.sk.open .nm small { display: none; }

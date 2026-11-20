@@ -161,10 +161,10 @@
           var lv = after[s.id] || 0, b0 = before[s.id] || 0, cst = lv ? E.cost(s.lv[lv - 1]) : null;
           var canUp = lv < s.max && preOk(s, after) && w.spent[P] < PER[P].budget;
           var canDn = seg[P].some(function (q) { return q.id === s.id; });
-          html += '<div class="sk' + (lv ? '' : ' zero') + '" data-id="' + s.id + '" draggable="true" title="拖到右邊的加點順序"><img class="ic" src="' + s.img + '" alt="" draggable="false">' +
-            '<div class="nm"><b>' + esc(s.name) + costTag(cst) + '</b><small>' + esc(lv ? s.lv[lv - 1] : s.desc) + '</small></div>' +
+          html += '<div class="sk' + (lv ? '' : ' zero') + (window.App.isOpen(s.id) ? ' open' : '') + '" data-id="' + s.id + '" draggable="true" title="拖到右邊的加點順序"><img class="ic" src="' + s.img + '" alt="" draggable="false">' +
+            '<div class="nm" title="點一下看完整說明"><b>' + esc(s.name) + costTag(cst) + '<i class="more-ic">▾</i></b><small>' + esc(lv ? s.lv[lv - 1] : s.desc) + '</small></div>' +
             '<div class="lv' + (lv === s.max ? ' max' : '') + '">' + lv + '<span> / ' + s.max + '</span>' + (lv > b0 ? '<em>+' + (lv - b0) + '</em>' : '') + '</div>' +
-            '<div class="btns"><button class="dn"' + (canDn ? '' : ' disabled') + ' aria-label="減一級">−</button><button class="up"' + (canUp ? '' : ' disabled') + ' aria-label="加一級">+</button></div></div>';
+            '<div class="btns"><button class="dn"' + (canDn ? '' : ' disabled') + ' aria-label="減一級">−</button><button class="up"' + (canUp ? '' : ' disabled') + ' aria-label="加一級">+</button></div>' + window.App.skillMore(s, lv, cls) + '</div>';
         });
         html += '</div>';
       });
