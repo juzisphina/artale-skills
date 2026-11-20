@@ -68,54 +68,79 @@
   window.addEventListener('hashchange', function () { render(); });
 
   function classOf(key) { return window.CLASSES.filter(function (c) { return c.key === key; })[0]; }
-  var state = { weapon: load('askills.weapon') === 'blunt' ? 'blunt' : 'sword' };
+  var state = { weapon: {} };
+  try { state.weapon = JSON.parse(load('askills.weapon2') || '{}') || {}; } catch (e) {}
+  function weaponB(c) { return !!(c.weapon && state.weapon[c.key] === 'b'); }
+
+  // 職業技能資料按需載入（data/skills/<key>.js）
+  var loading = {};
+  function ensureSkills(key) {
+    if (window.SKILLS_BY && window.SKILLS_BY[key]) return Promise.resolve();
+    if (loading[key]) return loading[key];
+    loading[key] = new Promise(function (res, rej) {
+      var sc = document.createElement('script'); sc.src = 'data/skills/' + key + '.js';
+      sc.onload = res; sc.onerror = function () { delete loading[key]; rej(); };
+      document.head.appendChild(sc);
+    });
+    return loading[key];
+  }
 
   function render() {
     var r = parseHash();
     var c = classOf(r.cls);
     if (!c) renderHome();
     else {
-      var ver = r.ver === 'new' ? 'new' : 'old';
+      var ver = c.vers.indexOf(r.ver) >= 0 ? r.ver : c.vers[0];
       var tab = /^(burn|save|sim)$/.test(r.tab) ? r.tab : 'burn';
+      if (!(window.SKILLS_BY && window.SKILLS_BY[c.key])) {
+        app.innerHTML = '<p class="muted">載入中…</p>';
+        ensureSkills(c.key).then(render, function () { app.innerHTML = '<p class="notice rose">技能資料載入失敗，請重新整理。</p>'; });
+        return;
+      }
       renderClass(c, ver, tab, r.q);
     }
     if (lang === 'cn') { if (converter) convAll(); else loadConverter().then(convAll, function () {}); }
   }
 
   // ---------- home ----------
-  var SOON = ['火毒大魔導', '冰雷大魔導', '英雄', '黑騎士', '箭神', '神射手', '暗影神偷', '夜使者', '拳霸', '槍神'];
   function renderHome() {
     document.title = 'Artale 技能加點站';
     var html = '<section class="hero"><h1>新角色不用再<b>糾結加點</b></h1>' +
       '<p>每個職業兩套最常見的加法：<b>燒錢快練</b>（藥水換速度）和 <b>省錢性價比</b>（少喝水）。照著 Lv 一步步點，30、70、120 轉職前都會剛好把點數用完。</p>' +
-      '<div class="chips"><span class="chip">🧪 現行版 / 技改版</span><span class="chip">🎮 自己配點模擬器</span><span class="chip">✨ AI 點評</span><span class="chip">💬 玩家留言</span></div></section>' +
-      '<div class="grid">';
-    window.CLASSES.forEach(function (c) {
-      var cls = window.SKILLS.old[c.key], icons = cls.stages.slice(1).map(function (st) { return st.skills[st.skills.length - 1]; });
-      html += '<a class="cls-card" href="#/' + c.key + '/old/burn"><div class="pic"><img src="' + c.img + '" alt=""></div><div class="body">' +
-        '<h3>' + esc(c.name) + '<small>' + c.en + '</small></h3><div class="muted small">' + esc(c.line) + '</div>' +
-        '<div class="icons">' + icons.map(function (s) { return '<img class="ic" src="' + s.img + '" alt="" title="' + esc(s.name) + '">'; }).join('') + '</div></div></a>';
+      '<div class="chips"><span class="chip">🧪 現行版 / 技改版</span><span class="chip">🎮 自己配點模擬器</span><span class="chip">✨ AI 點評</span><span class="chip">💬 玩家留言</span></div></section>';
+    var groups = [];
+    window.CLASSES.forEach(function (c) { if (groups.indexOf(c.group) < 0) groups.push(c.group); });
+    groups.forEach(function (g) {
+      html += '<h2 class="grp">' + esc(g) + (g === '皇家騎士團' ? ' <span class="muted small">目前只有測試服（技改版）資料</span>' : '') + '</h2><div class="grid">';
+      window.CLASSES.filter(function (c) { return c.group === g; }).forEach(function (c) {
+        html += '<a class="cls-card" href="#/' + c.key + '/' + c.vers[0] + '/burn"><div class="pic"><img src="' + c.img + '" alt="" loading="lazy"></div><div class="body">' +
+          '<h3>' + esc(c.name) + '<small>' + c.en + '</small></h3><div class="muted small">' + esc(c.line) + '</div>' +
+          '<div class="icons">' + c.icons.map(function (src) { return '<img class="ic" src="' + src + '" alt="" loading="lazy">'; }).join('') + '</div></div></a>';
+      });
+      html += '</div>';
     });
-    SOON.forEach(function (n) {
-      html += '<div class="cls-card soon"><div class="pic">⏳</div><div class="body"><h3>' + n + '</h3><div class="muted small">陸續加入中</div></div></div>';
-    });
-    app.innerHTML = html + '</div>';
+    app.innerHTML = html;
     window.scrollTo(0, 0);
   }
 
   // ---------- class page ----------
-  function swapFor(c) { return c.weapon && state.weapon === 'blunt' ? window.WEAPON_SWAP : null; }
+  function swapFor(c, cls) {
+    if (!weaponB(c)) return null;
+    var idx = E.index(cls), m = {};
+    for (var k in c.swap) if (idx[k] && idx[c.swap[k]]) { m[k] = c.swap[k]; m[c.swap[k]] = k; }
+    return m;
+  }
   function stageLabel(name) { return name.replace(/\s*\(.*\)/, function (m) { return ' · ' + m.replace(/[()\s]/g, ''); }); }
 
   function renderClass(c, ver, tab, q) {
-    var cls = window.SKILLS[ver][c.key], V = window.VERSIONS.filter(function (v) { return v.key === ver; })[0];
+    var cls = window.SKILLS_BY[c.key][ver], V = window.VERSIONS.filter(function (v) { return v.key === ver; })[0];
     document.title = c.name + '加點｜Artale 技能加點站';
     var html = '<a class="back" href="#/">← 所有職業</a>' +
       '<div class="cls-head"><div class="face"><img src="' + c.img + '" alt=""></div><div><h1>' + esc(c.name) + ' <span class="muted small">' + c.en + '</span></h1><div class="line">' + esc(c.line) + '</div></div></div>' +
-      '<div class="toolbar"><div class="seg" id="verSeg">' + window.VERSIONS.map(function (v) {
+      '<div class="toolbar"><div class="seg" id="verSeg">' + window.VERSIONS.filter(function (v) { return c.vers.indexOf(v.key) >= 0; }).map(function (v) {
         return '<button data-ver="' + v.key + '" class="' + (v.key === ver ? 'on' : '') + '">' + v.name + '</button>';
       }).join('') + '</div>' +
-      (c.weapon ? '<div class="seg" id="wSeg"><button data-w="sword" class="' + (state.weapon === 'sword' ? 'on' : '') + '">🗡 劍騎</button><button data-w="blunt" class="' + (state.weapon === 'blunt' ? 'on' : '') + '">🔨 棍騎</button></div>' : '') +
+      (c.weapon ? '<div class="seg" id="wSeg"><button data-w="a" class="' + (weaponB(c) ? '' : 'on') + '">' + c.weapon[0] + '</button><button data-w="b" class="' + (weaponB(c) ? 'on' : '') + '">' + c.weapon[1] + '</button></div>' : '') +
       '</div><div class="ver-sub ' + ver + '">' + esc(V.sub) + '</div>' +
       '<div class="tabs">' +
       tabBtn('burn', '🔥 燒錢快練', '藥水換速度', tab) + tabBtn('save', '💰 省錢性價比', '少喝水、CP 值高', tab) + tabBtn('sim', '🎮 自己配點', '模擬器，規則照遊戲', tab) +
@@ -126,7 +151,7 @@
     app.innerHTML = html;
 
     app.querySelectorAll('#verSeg button').forEach(function (b) { b.onclick = function () { go(c.key, b.dataset.ver, tab, tab === 'sim' ? {} : { lv: q.lv }); }; });
-    app.querySelectorAll('#wSeg button').forEach(function (b) { b.onclick = function () { state.weapon = b.dataset.w; save('askills.weapon', state.weapon); render(); }; });
+    app.querySelectorAll('#wSeg button').forEach(function (b) { b.onclick = function () { state.weapon[c.key] = b.dataset.w; save('askills.weapon2', JSON.stringify(state.weapon)); render(); }; });
     app.querySelectorAll('.tab').forEach(function (b) { b.onclick = function () { go(c.key, ver, b.dataset.tab, b.dataset.tab === 'sim' ? {} : { lv: q.lv }); }; });
 
     var ctx = { c: c, cls: cls, ver: ver, V: V, tab: tab, q: q };
@@ -190,7 +215,7 @@
 
   // ----- build tab -----
   function renderBuild(x) {
-    var b = window.BUILDS[x.c.key][x.ver][x.tab], sim = E.simulate(x.cls, b.steps, swapFor(x.c));
+    var b = window.BUILDS[x.c.key][x.ver][x.tab], sim = E.simulate(x.cls, b.steps, swapFor(x.c, x.cls));
     var L = Math.max(1, Math.min(200, +x.q.lv || 120));
     x.build = b; x.sim = sim; x.L = L;
     var body = $('#tabBody');
@@ -261,7 +286,7 @@
     if (x.q.s) s = decodeSim(x.cls, x.q.s);
     if (!s) { try { s = JSON.parse(load(simKey(x)) || 'null'); } catch (e) { s = null; } }
     if (!s || !s.cur) s = { L: 120, cur: {} };
-    var swap = swapFor(x.c);
+    var swap = swapFor(x.c, x.cls);
     x.simState = s;
     var body = $('#tabBody');
     body.innerHTML = '<section class="card"><h2>🎮 自己配點 <span class="muted">規則與遊戲相同：30 / 70 / 120 轉職前要把前面的點數用完</span></h2>' +
@@ -388,7 +413,7 @@
       var btn = this; btn.disabled = true; $('#aiState').textContent = 'AI 思考中…（約 10~30 秒）'; $('#aiOut').innerHTML = '';
       var V = x.V, prompt =
         '你是 Artale（楓之谷懷舊版，台服）的資深玩家，幫新手看技能加點。職業：' + x.c.name + '（' + V.name + '：' + V.sub + '）' +
-        (x.c.weapon ? '，武器：' + (state.weapon === 'blunt' ? '棍' : '劍') : '') + '。\n' +
+        (x.c.weapon ? '，武器：' + x.c.weapon[weaponB(x.c) ? 1 : 0].replace(/^\S+\s/, '') : '') + '。\n' +
         '遊戲規則：Lv30、70、120 轉職前，前一轉的技能點必須全部用完；技能有前置需求。技能等級越高通常越耗 MP（藥水）。\n\n' +
         describe(x) + '\n\n' + ($('#aiAsk').value.trim() ? '玩家的問題：' + $('#aiAsk').value.trim() + '\n\n' : '') +
         '請用' + (lang === 'cn' ? '簡體中文' : '台灣繁體中文（台灣用語）') + '回答，300 字內，口語好懂：\n' +

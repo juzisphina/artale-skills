@@ -247,3 +247,6 @@ dialog::backdrop { background: rgba(30, 20, 10, .4); }
 .ed-check { margin-top: 12px; }
 .notice.ok { background: color-mix(in srgb, var(--ok) 15%, var(--card)); }
 .ed-bar { display: flex; gap: 8px; margin-top: 8px; position: sticky; bottom: 10px; background: var(--card); padding: 8px 0; }
+
+.grp { font-size: 18px; margin: 22px 0 12px; display: flex; align-items: baseline; gap: 8px; }
+.grp .small { font-weight: 400; }

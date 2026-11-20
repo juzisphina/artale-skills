@@ -2,18 +2,22 @@
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const root = path.join(__dirname, '..');
 const ctx = vm.createContext({ window: {} });
-for (const f of ['data/skills.js', 'data/classes.js', 'data/builds.js']) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);
-const { SKILLS, BUILDS, CLASSES, WEAPON_SWAP } = ctx.window;
+const files = ['data/classes.js', 'data/builds.js'].concat(fs.readdirSync(path.join(root, 'data/skills')).map(f => 'data/skills/' + f));
+for (const f of files) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx);
+const { SKILLS_BY, BUILDS, CLASSES } = ctx.window;
 const E = require(path.join(root, 'engine.js'));
 let fail = 0;
 const ok = (c, msg) => { if (!c) { fail++; console.log('  ✗ ' + msg); } };
 
-for (const c of CLASSES) for (const v of ['old', 'new']) for (const b of ['burn', 'save']) {
-  const cls = SKILLS[v][c.key], build = BUILDS[c.key][v][b];
-  for (const weapon of c.weapon ? ['sword', 'blunt'] : ['-']) {
+for (const c of CLASSES) for (const v of c.vers) for (const b of ['burn', 'save']) {
+  const cls = SKILLS_BY[c.key][v], build = BUILDS[c.key] && BUILDS[c.key][v] && BUILDS[c.key][v][b];
+  if (!cls || !build) { ok(false, `${c.key}/${v}/${b}: 缺資料`); continue; }
+  const idx = E.index(cls), swap = {};
+  for (const k in (c.swap || {})) if (idx[k] && idx[c.swap[k]]) { swap[k] = c.swap[k]; swap[c.swap[k]] = k; }
+  for (const weapon of c.weapon ? ['a', 'b'] : ['-']) {
     const before = fail;
     const tag = `${c.key}/${v}/${b}${weapon !== '-' ? '/' + weapon : ''}`;
-    const vr = E.validate(cls, build.steps, weapon === 'blunt' ? WEAPON_SWAP : null), r = vr.sim;
+    const vr = E.validate(cls, build.steps, weapon === 'b' ? swap : null), r = vr.sim;
     vr.errors.forEach(e => ok(false, tag + ': ' + e));
     for (const k of ['title', 'summary', 'pros', 'cons', 'potion']) ok(build[k] != null && build[k] !== '', tag + ': 缺少 ' + k);
     const at = L => E.stageSums(cls, E.levelsAt(r.log, L));
@@ -23,9 +27,9 @@ for (const c of CLASSES) for (const v of ['old', 'new']) for (const b of ['burn'
 }
 
 // 模擬器規則
-const P = SKILLS.old.Paladin;
+const P = SKILLS_BY.Paladin.old;
 ok(E.mainSp(P, 30) === 62 && E.mainSp(P, 200) === 576, 'Paladin SP 公式');
-ok(E.mainSp(SKILLS.old.Bishop, 30) === 68, 'Bishop SP 公式');
+ok(E.mainSp(SKILLS_BY.Bishop.old, 30) === 68, 'Bishop SP 公式');
 let cur = {};
 ok(E.whyNotAdd(P, cur, 30, 'swordMastery') === 'gate', '1 轉沒點滿不能點 2 轉');
 ok(E.whyNotAdd(P, cur, 20, 'swordMastery') === 'lv', '等級不到不能點 2 轉');

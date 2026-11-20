@@ -1,5 +1,5 @@
 // 加點引擎：依照 Artale 規則，把「加點順序」一級一級模擬出來。
-// 規則（與 boa19950303 技能模擬器一致）：
+// 規則：
 //  - 新手 Lv10 前給 6 點，只能點 0 轉技能
 //  - 從 1 轉等級（法師 8 / 其他 10）起每升一級 +3 點；轉職等級（1轉、30、70）各 +1，120 +3
 //  - 2 轉技能：1 轉已點 >= req[0]；3 轉：1+2 轉 >= req[1]；4 轉：1+2+3 轉 >= req[2]
@@ -145,7 +145,9 @@
       if (s119[1] + s119[2] + s119[3] !== mainSp(cls, 119)) errors.push('Lv120 轉職前 1~3 轉點數沒用完（' + (s119[1] + s119[2] + s119[3]) + ' / ' + mainSp(cls, 119) + '）');
       var s200 = at(200), used = s200[1] + s200[2] + s200[3] + s200[4];
       var allDone = r.steps.every(function (s) { return s.lvEnd !== undefined; });
-      if (allDone && used < mainSp(cls, 200)) errors.push('步驟全部點完了，但到 Lv200 還剩 ' + (mainSp(cls, 200) - used) + ' 點沒安排');
+      var cap = 0; cls.stages.forEach(function (st, si) { if (si > 0) st.skills.forEach(function (s) { cap += s.max; }); });
+      var should = Math.min(mainSp(cls, 200), cap);
+      if (allDone && used < should) errors.push('步驟全部點完了，但到 Lv200 還剩 ' + (should - used) + ' 點沒安排');
     }
     return { sim: r, errors: errors };
   }

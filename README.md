@@ -18,10 +18,11 @@ npm run check            # 檢查所有推薦加點都符合遊戲規則
 node scripts/serve.mjs   # 本機預覽 http://localhost:8792
 ```
 
-- `data/skills.js`：技能資料（整理自 boa19950303 技能模擬器）
+- `data/classes.js`：職業清單
+- `data/skills/<職業>.js`：技能資料（進職業頁才載入）
 - `data/builds.js`：推薦加點（`技能id:目標等級` 依序排列，網站自動模擬每一步在幾等完成）
 - `engine.js`：加點規則引擎（網站與檢查共用）
 
-新增職業：在 `data/skills.js` 加資料、`data/builds.js` 加 `CLASSES` 與 `BUILDS`，再跑 `npm run check`。
+推薦加點也可以在網站上用「🔧 管理員」登入後直接編輯（只有站長的 GitHub 金鑰能存檔）。
 
 技能圖示與職業圖片版權屬原遊戲公司所有。
