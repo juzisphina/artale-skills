@@ -378,10 +378,7 @@ window.BUILDS = {
           "防禦類技能較晚"
         ],
         "steps": "b_snailThrow:3 b_nimbleFeet:3 slashBlast:1 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:20 slashBlast:7 hpRecovery:16 hpRestore:8 swordMastery:20 swordBooster:20 threaten:20 powerReflection:30 finalAttackSword:30 slashBlast:8 elementalCharge:3 magicCrash:20 iceChargeSword:1 flameChargeSword:1 lightningChargeSword:1 elementalCharge:30 shieldMastery:1 iceChargeSword:30 flameChargeSword:30 mpRecoveryKnight:20 lightningChargeSword:20 ultimateSpear:1 heavensHammer:1 elementalReinforcement:1",
-        "notes": {
-          "1": "魔天一擊點 1 解鎖劍氣縱橫（群攻）並點滿。",
-          "4": "屬性強化需要屬性攻擊 30。"
-        },
+        "notes": {},
         "maxLv": 120
       },
       "save": {
