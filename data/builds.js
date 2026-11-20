@@ -783,7 +783,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 darkSight:1 haste:20 doubleStab:20 darkSight:20 luckySeven:1 daggerMastery:5 daggerBooster:6 savageBlow:30 recovery:20 daggerMastery:20 daggerBooster:20 booster:20 steal:11 mesoExplosion:3 mesoUp:20 assaulter:30 shadowPartner:30 mesoGuard:30 shieldMasteryThief:20 mesoGuardShield:18 venom:30 shadowerInstinct:30 boomerangStep:30 mapleWarrior:10 assassinate:20 smokescreen:30 ninjaAmbush:30 mapleWarrior:30 patch_4221002:10 taunt:30 heroesWill:1 mesoGuardShield:20 mesoExplosion:30 steal:30 luckySeven:20 curse:20 keenEyes:8",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "savageBlow",
+        "name": "迴旋斬",
+        "img": "img/skills/savageBlow.png"
+      },
+      {
+        "id": "booster",
+        "name": "速度激發",
+        "img": "img/skills/booster.png"
+      },
+      {
+        "id": "mesoGuardShield",
+        "name": "楓幣護盾",
+        "img": "img/skills/mesoGuardShield.png"
+      },
+      {
+        "id": "boomerangStep",
+        "name": "順步連擊",
+        "img": "img/skills/boomerangStep.png"
+      }
+    ]
   },
   "NightLord": {
     "old": {
