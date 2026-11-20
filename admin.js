@@ -2,12 +2,18 @@
 // 金鑰只存在這台裝置的瀏覽器；存檔時直接呼叫 GitHub API 改 data/builds.js。
 (function () {
   'use strict';
-  var A = window.ADMIN || {}, TOKEN = 'askills.ghToken', API = 'https://api.github.com/repos/' + A.repo + '/contents/' + A.path;
+  var A = window.ADMIN || {}, TOKEN = 'askills.ghToken', LOGIN = 'askills.ghLogin', API = 'https://api.github.com/repos/' + A.repo + '/contents/' + A.path;
   var E = window.Engine;
   function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function save(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
   function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function token() { return load(TOKEN) || ''; }
+  function saveErr(e) {
+    if (e.status === 401) return '金鑰過期或無效，請重新登入';
+    if (e.status === 403 || e.status === 404) return '這個帳號沒有編輯權限（可能已被站長移除協作者，或金鑰沒開寫入權限）';
+    if (e.status === 409) return '剛好有人同時在改，請重新整理後再存一次';
+    return e.message;
+  }
   function gh(url, opt) {
     opt = opt || {};
     opt.headers = Object.assign({ Authorization: 'Bearer ' + token(), Accept: 'application/vnd.github+json' }, opt.headers || {});
@@ -33,7 +39,7 @@
     },
     openLogin: function () {
       var d = document.getElementById('adminDlg');
-      document.getElementById('adminState').textContent = token() ? '目前已登入管理員。' : '目前不是管理員。';
+      document.getElementById('adminState').textContent = token() ? '目前已登入：' + (load(LOGIN) || '管理員') + (load(LOGIN) === A.owner ? '（站長）' : '（協作者）') + '。' : '目前沒有登入。';
       document.getElementById('adminInput').value = '';
       if (window.App) window.App.conv(d);
       d.showModal();
@@ -49,15 +55,17 @@
       st.textContent = '驗證中…';
       var old = token(); save(TOKEN, v);
       Promise.all([gh('https://api.github.com/user'), gh('https://api.github.com/repos/' + A.repo)]).then(function (res) {
+        // 站長本人，或站長在 GitHub 邀請的協作者（有寫入權限）才可以編輯
         var login = res[0].login, push = res[1].permissions && res[1].permissions.push;
-        if (login !== A.owner || !push) throw new Error('這把金鑰屬於 ' + login + '，沒有這個網站的編輯權限');
-        d.close(); window.App.toast('管理員登入成功 ✓'); Admin.loadFresh().then(window.App.render);
+        if (!push) throw new Error('帳號 ' + login + ' 不是這個網站的協作者。請站長先在 GitHub 邀請你，接受邀請後再登入');
+        save(LOGIN, login);
+        d.close(); window.App.toast('登入成功 ✓ ' + login + (login === A.owner ? '（站長）' : '（協作者）')); Admin.loadFresh().then(window.App.render);
       }).catch(function (e) {
         save(TOKEN, old || null);
         st.textContent = e.status === 401 ? '金鑰無效或已過期。' : ('不能用：' + e.message);
       });
     };
-    document.getElementById('adminOut').onclick = function () { save(TOKEN, null); d.close(); window.App.toast('已登出管理員'); window.App.render(); };
+    document.getElementById('adminOut').onclick = function () { save(TOKEN, null); save(LOGIN, null); d.close(); window.App.toast('已登出'); window.App.render(); };
   }
 
   // ---------- 編輯器（依轉職階段分頁編輯）----------
@@ -309,7 +317,7 @@
         window.App.toast('已儲存 ✓ 約 1 分鐘後網站更新'); window.App.render();
       }, function (e) {
         saveBtn.disabled = false; saveBtn.textContent = '💾 儲存到網站';
-        check.insertAdjacentHTML('afterbegin', '<p class="notice rose">儲存失敗：' + esc(e.status === 401 ? '金鑰過期，請重新登入管理員' : e.message) + '</p>');
+        check.insertAdjacentHTML('afterbegin', '<p class="notice rose">儲存失敗：' + esc(saveErr(e)) + '</p>');
       });
     };
     function lines(sel) { return body.querySelector(sel).value.split('\n').map(function (s) { return s.trim(); }).filter(Boolean); }
@@ -353,7 +361,7 @@
             d.close(); window.App.toast('已儲存 ✓ 約 1 分鐘後網站更新'); window.App.render();
           }, function (e) {
             btn.disabled = false; btn.textContent = '儲存到網站';
-            d.querySelector('#featMsg').textContent = '儲存失敗：' + (e.status === 401 ? '金鑰過期，請重新登入管理員' : e.message);
+            d.querySelector('#featMsg').textContent = '儲存失敗：' + (saveErr(e));
           });
         };
         window.App.conv(d);
@@ -375,7 +383,7 @@
       var src = header() + 'window.BUILDS = ' + JSON.stringify(all, null, 2) + ';\n';
       return gh(API, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: '網站編輯：' + label, content: b64encode(src), sha: j.sha, branch: A.branch })
+        body: JSON.stringify({ message: '網站編輯：' + label + (load(LOGIN) ? '（by ' + load(LOGIN) + '）' : ''), content: b64encode(src), sha: j.sha, branch: A.branch })
       }).then(function () { window.BUILDS = all; });
     });
   }

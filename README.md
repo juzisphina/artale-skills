@@ -23,6 +23,6 @@ node scripts/serve.mjs   # 本機預覽 http://localhost:8792
 - `data/builds.js`：推薦加點（`技能id:目標等級` 依序排列，網站自動模擬每一步在幾等完成）
 - `engine.js`：加點規則引擎（網站與檢查共用）
 
-推薦加點也可以在網站上用「🔧 管理員」登入後直接編輯（只有站長的 GitHub 金鑰能存檔）。
+推薦加點也可以在網站上用「🔧 管理員」登入後直接編輯：站長或站長在 GitHub 邀請的協作者（Settings → Collaborators）才能存檔。協作者用 classic token（只勾 public_repo）。
 
 技能圖示與職業圖片版權屬原遊戲公司所有。
