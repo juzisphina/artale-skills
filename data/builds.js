@@ -15,13 +15,13 @@ window.BUILDS = {
           "魔力爪 20、聖光 30 每發都比較耗藍",
           "前期幾乎靠喝藍水撐"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicClaw:20 magicGuard:20 magicPurify:5 magicExtension:10 magicShield:11 massHeal:30 teleport:20 holyLight:20 angelBlessing:20 holyArrow:30 magicPurify:6 shiningRay:30 dispel:3 holySymbol:30 summonHolyDragon:15 mysticDoor:1 magicResistance:20 dispel:20 monsterTransformation:30 mysticDoor:6 genesis:30 mapleWarrior:10 summonDragon:30 angelRay:30 heavensDoor:10 infinity:30 mapleWarrior:30 holyShield:30 resurrection:10 heroesWill:1 heavensDoor:30 magicDrain:20 magicPurify:16",
+        "steps": "b_nimbleFeet:3 b_snailThrow:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 holyLight:20 angelBlessing:20 teleport:20 holyArrow:10 magicClaw:1 magicResistance:1 dispel:3 holySymbol:30 shiningRay:30 magicResistance:20 summonHolyDragon:15 dispel:20 mysticDoor:20 monsterTransformation:16 heavensDoor:1 genesis:30 mapleWarrior:10 summonDragon:30 angelRay:30 infinity:15 heavensDoor:5 holyShield:20 resurrection:1",
         "notes": {
-          "1": "魔力爪是 1 轉唯一的主力，直接點滿。",
-          "2": "群體治癒先滿打不死系；不點魔力吸收，改點神聖之箭補單體輸出。",
+          "2": "群體治癒先滿打不死系。",
           "3": "聖光一進 3 轉就點滿。",
           "4": "核爆術最先滿，召喚神龍、天使之箭接著補。"
-        }
+        },
+        "maxLv": 168
       },
       "save": {
         "title": "省錢性價比",
