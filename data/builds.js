@@ -1041,7 +1041,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 nimbleBody:10 doubleShotPirate:20 somersaultKick:20 dash:1 nimbleBody:20 gunMastery:5 gunBooster:6 gunMastery:20 bombToss:20 scatterShot:20 gunBooster:20 fakeShot:20 slowDescent:10 recoilShot:11 summonOctopus:30 tripleFire:20 gaviota:5 coldBeam:30 flamethrower:30 targeting:30 gaviota:11 octopusKing:20 pirateShip:10 pirateCannon:30 instantBlizzard:30 mapleWarrior:10 instantFlash:30 gaviota:15 specialForce:30 mapleWarrior:30 pirateTorpedo:30 mindControl:20 preciseCannon:20 heroesWill:1 gaviota:30 recoilShot:20 straightPunch:20 dash:10",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "slowDescent",
+        "name": "緩降術",
+        "img": "img/skills/slowDescent.png"
+      },
+      {
+        "id": "summonOctopus",
+        "name": "章魚砲台",
+        "img": "img/skills/summonOctopus.png"
+      },
+      {
+        "id": "gaviota",
+        "name": "海鷗突擊隊",
+        "img": "img/skills/gaviota.png"
+      },
+      {
+        "id": "flamethrower",
+        "name": "火焰噴射",
+        "img": "img/skills/flamethrower.png"
+      }
+    ]
   },
   "SoulMaster": {
     "new": {
