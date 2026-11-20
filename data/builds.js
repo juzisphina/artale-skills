@@ -166,7 +166,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 magicArrow:1 magicClaw:11 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:9 magicDrain:20 patch_2100001:1 poisonMist:30 teleport:20 mentalClarity:20 flameArrow:30 firePoisonStrike:30 magicBooster:30 apocalypse:30 firePoisonResistance:20 patch_2100001:20 patch_2110002:1 deadlyPoison:21 infinity:15 paralyze:30 mapleWarrior:10 fieryHell:5 summonIfritI:30 meteorShower:30 infinity:30 mapleWarrior:30 genesis:30 fieryHell:30 heroesWill:1 patch_2110002:20 patch_2120000:30 deadlyPoison:30 extremeCasting:20 magicShield:20 magicArrow:20 magicClaw:20",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "mentalClarity",
+        "name": "精神強化",
+        "img": "img/skills/mentalClarity.png"
+      },
+      {
+        "id": "deadlyPoison",
+        "name": "致命毒霧",
+        "img": "img/skills/deadlyPoison.png"
+      },
+      {
+        "id": "paralyze",
+        "name": "劇毒麻痺",
+        "img": "img/skills/paralyze.png"
+      },
+      {
+        "id": "meteorShower",
+        "name": "火流星",
+        "img": "img/skills/meteorShower.png"
+      }
+    ]
   },
   "ArchMageIL": {
     "old": {
