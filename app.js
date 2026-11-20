@@ -209,12 +209,13 @@
     var h = '<span class="potion" title="耗水程度 ' + n + ' / 5">耗水 '; for (var i = 1; i <= 5; i++) h += '<i class="' + (i <= n ? 'f' : '') + '"></i>'; return h + '</span>';
   }
 
-  function lvPicker(L, id, max) {
+  function lvPicker(L, id, max, ref) {
     max = max || 200;
     var miles = MILES.filter(function (m) { return m < max; }).concat([max]);
+    if (ref && ref < max && miles.indexOf(ref) < 0) miles = miles.concat([ref]).sort(function (a, b) { return a - b; });
     return '<div class="lvbar"><span class="lvnum">Lv <input type="number" min="1" max="' + max + '" value="' + L + '" id="' + id + 'Num" inputmode="numeric"></span>' +
       '<input type="range" min="1" max="' + max + '" value="' + L + '" id="' + id + 'Rng" aria-label="角色等級">' +
-      '<div class="mile">' + miles.map(function (m) { return '<button data-lv="' + m + '" class="' + (m === L ? 'on' : '') + '">' + m + '</button>'; }).join('') + '</div></div>';
+      '<div class="mile">' + miles.map(function (m) { return '<button data-lv="' + m + '" class="' + (m === L ? 'on' : '') + (m === ref && ref < max ? ' ref' : '') + '"' + (m === ref && ref < max ? ' title="這套加點的參照等級"' : '') + '>' + (m === ref && ref < max ? '📌' : '') + m + '</button>'; }).join('') + '</div></div>';
   }
   function wirePicker(id, onChange, max) {
     var num = $('#' + id + 'Num'), rng = $('#' + id + 'Rng');
@@ -229,7 +230,7 @@
   function renderBuild(x) {
     var b = window.BUILDS[x.c.key][x.ver][x.tab], sim = E.simulate(x.cls, b.steps, swapFor(x.c, x.cls));
     var M = Math.max(10, Math.min(200, +b.maxLv || 200));
-    var L = Math.max(1, Math.min(M, +x.q.lv || Math.min(120, M)));
+    var L = Math.max(1, Math.min(200, +x.q.lv || Math.min(120, M)));
     x.build = b; x.M = M; x.sim = sim; x.L = L;
     var body = $('#tabBody');
     var err = sim.errors.length ? '<p class="notice rose">⚠ 這套加點有規則問題：' + sim.errors.map(esc).join('；') + '</p>' : '';
@@ -238,29 +239,38 @@
       (window.Admin && window.Admin.on() ? '<button class="btn edit-btn" id="editBuild">✏️ 編輯這套</button>' : '') + '</h2><p>' + esc(b.summary) + '</p>' +
       '<div class="pc"><div class="pro"><b>優點</b><ul>' + b.pros.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div>' +
       '<div class="con"><b>缺點</b><ul>' + b.cons.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></div></div></section>' +
-      '<div class="cols"><section class="card"><h2>📋 技能視窗 <span class="muted">拉到你的等級看該點到哪</span></h2>' + lvPicker(L, 'bv', M) + '<div id="bvWin"></div>' +
+      '<div class="cols"><section class="card"><h2>📋 技能視窗 <span class="muted">拉到你的等級看該點到哪</span></h2>' + lvPicker(L, 'bv', 200, M) + '<p class="notice beyond" id="bvBeyond" hidden></p><div id="bvWin"></div>' +
       '<button class="btn" id="toSim">🎮 用這套在模擬器微調</button></section>' +
       '<section class="card"><h2>🧭 加點順序 <span class="muted">由上往下點</span></h2><ol class="steps" id="stepList"></ol></section></div>';
     function paint(L2) {
       x.L = L2;
-      $('#bvWin').innerHTML = skillWindow(x.cls, E.levelsAt(sim.log, L2), L2, { hideZero: false });
+      // 超過參照等級：技能維持參照等級時的配點，多出來的點數提示玩家自己分配
+      var cur = E.levelsAt(sim.log, Math.min(L2, M));
+      $('#bvWin').innerHTML = skillWindow(x.cls, cur, L2, { hideZero: false });
+      var bey = $('#bvBeyond');
+      if (L2 > M) {
+        var bb = E.budget(x.cls, cur, L2), free = Math.max(0, bb.main - bb.usedMain) + Math.max(0, bb.beg - bb.usedBeg);
+        bey.innerHTML = '📌 這套加點規劃到 <b>Lv' + M + '</b>。Lv' + L2 + ' 時還有 <b>' + free + '</b> 點可以自己分配。 <button class="btn" id="beyondSim">🎮 到自己配點繼續規劃</button>';
+        bey.hidden = false;
+        $('#beyondSim').onclick = function () { $('#toSim').click(); };
+      } else bey.hidden = true;
       app.querySelectorAll('.lvbar .mile button').forEach(function (bt) { bt.classList.toggle('on', +bt.dataset.lv === L2); });
       app.querySelectorAll('#stepList li[data-s]').forEach(function (li) {
         var s = sim.steps[+li.dataset.s];
         li.classList.toggle('past', s.lvEnd !== undefined && s.lvEnd <= L2 && !(s.lvStart <= L2 && s.lvEnd === L2));
         li.classList.toggle('now', s.lvStart !== undefined && s.lvStart <= L2 && (s.lvEnd === undefined || s.lvEnd >= L2));
       });
-      if (lang === 'cn' && converter) conv($('#bvWin'));
+      if (lang === 'cn' && converter) { conv($('#bvWin')); conv(bey); }
     }
     $('#stepList').innerHTML = stepsHtml(x, sim, b);
     paint(L);
     wirePicker('bv', function (v, commit) {
       paint(v);
       if (commit) history.replaceState(null, '', '#/' + x.c.key + '/' + x.ver + '/' + x.tab + '?lv=' + v);
-    }, M);
+    }, 200);
     if ($('#editBuild')) $('#editBuild').onclick = function () { window.Admin.edit(x, body); };
     $('#toSim').onclick = function () {
-      var cur = E.levelsAt(sim.log, x.L);
+      var cur = E.levelsAt(sim.log, Math.min(x.L, M));
       saveSim(x, { L: x.L, cur: cur });
       go(x.c.key, x.ver, 'sim', {});
     };

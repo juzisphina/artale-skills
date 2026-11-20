@@ -349,3 +349,6 @@ dialog#featDlg .dlg { max-width: none; }
 /* 0 級的技能只淡化圖示和文字，前置紅標保持清楚 */
 .sk.zero { opacity: 1; }
 .sk.zero > .ic, .sk.zero .nm b, .sk.zero .nm small, .sk.zero > .lv, .sk.zero .pre.met { opacity: .5; }
+.mile button.ref { border-color: var(--rose); color: var(--rose); font-weight: 700; }
+.notice.beyond { background: var(--rose-soft); }
+.notice.beyond .btn { margin-left: 6px; padding: 3px 10px; font-size: 13px; }
