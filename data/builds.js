@@ -611,7 +611,29 @@ window.BUILDS = {
         "steps": "b_nimbleFeet:3 b_recovery:3 archeryMastery:3 eyeOfTheAmazon:8 arrowBlow:1 doubleShot:20 criticalShot:20 archeryMastery:12 bowMastery:5 bowBooster:20 arrowPlatter:20 bowMastery:20 finalAttackBow:30 bombArrow:30 powerKnockBack:1 puppet:5 summonSilverHawk:30 strafeBow:30 mortalBlow:5 arrowRain:30 puppet:20 inferno:30 mortalBlow:11 bowExpert:30 hurricane:30 phoenix:30 sharpEyes:30 mapleWarrior:30 concentrate:30 dragonBreath:30 hamstringShot:30 heroesWill:1 mortalBlow:20 nimbleFeet:20 powerKnockBack:20 archeryMastery:16 focus:20 arrowBlow:20",
         "notes": {}
       }
-    }
+    },
+    "featured": [
+      {
+        "id": "bombArrow",
+        "name": "炸彈箭",
+        "img": "img/skills/bombArrow.png"
+      },
+      {
+        "id": "sharpEyes",
+        "name": "會心之眼",
+        "img": "img/skills/sharpEyes.png"
+      },
+      {
+        "id": "hurricane",
+        "name": "暴風神射",
+        "img": "img/skills/hurricane.png"
+      },
+      {
+        "id": "phoenix",
+        "name": "召喚鳳凰",
+        "img": "img/skills/phoenix.png"
+      }
+    ]
   },
   "Marksman": {
     "old": {
