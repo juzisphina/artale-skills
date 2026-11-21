@@ -117,11 +117,10 @@
     box.querySelector('#teamCopy').onclick = function () {
       var site = location.origin + location.pathname;
       var text = '我邀請你一起編輯「Artale 技能加點站」🍊\n' +
-        '1. 接受邀請：打開 GitHub 寄到你信箱的邀請信，按「Accept invitation」。（找不到信的話，登入 GitHub 後直接開這個連結：https://github.com/' + A.repo + '/invitations）\n' +
-        '2. 申請金鑰：先確認已登入你自己的 GitHub 帳號，再打開這個連結（選項已勾好，你只要選金鑰的有效期限，例如 90 天）：' + TOKEN_LINK + '\n' +
-        '   拉到最下面按「Generate token」，新頁面會出現一串 ghp_ 開頭的金鑰，請馬上複製起來（離開頁面後就看不到了）。\n' +
-        '3. 打開「Artale 技能加點站」：' + site + ' ，按最下面「🔧 管理員」，貼上金鑰按「登入」，就可以編輯了。\n' +
-        '金鑰只存在你自己的瀏覽器，請不要傳給別人。金鑰過期後，照第 2 步重新申請一把就好，謝謝！';
+        '1. 接受邀請：打開 GitHub 寄到你信箱的邀請信，按「Accept invitation」。\n' +
+        '2. 申請金鑰：先確認已登入你自己的 GitHub 帳號，再打開這個連結（選項已勾好，你只要選金鑰的有效期限）：' + TOKEN_LINK + '\n' +
+        '   拉到最下面按「Generate token」，新頁面會出現一串 ghp_ 開頭的金鑰，請馬上複製起來。\n' +
+        '3. 打開「Artale 技能加點站」：' + site + ' ，按最下面「🔧 管理員」，貼上金鑰按「登入」，就可以編輯了。';
       (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { say('已複製 ✓ 直接貼給對方就好'); }, function () { prompt('複製這段文字給對方：', text); });
     };
     refresh();
