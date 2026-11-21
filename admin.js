@@ -1,4 +1,4 @@
-// 管理員編輯：只有持有 juzisphina 帳號 GitHub 金鑰（token）的人能把修改存回網站。
+// 管理員編輯：站長（juzisphina）或站長在 GitHub 邀請的協作者，用自己的 GitHub 金鑰登入後能把修改存回網站。
 // 金鑰只存在這台裝置的瀏覽器；存檔時直接呼叫 GitHub API 改 data/builds.js。
 (function () {
   'use strict';
@@ -20,7 +20,8 @@
     opt.cache = 'no-store';
     return fetch(url, opt).then(function (r) {
       if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { var e = new Error(j.message || ('HTTP ' + r.status)); e.status = r.status; throw e; });
-      return r.json();
+      if (r.status === 204) return {};
+      return r.json().then(function (j) { if (j && typeof j === 'object' && !Array.isArray(j)) j._status = r.status; return j; });
     });
   }
   function b64decode(s) { return decodeURIComponent(escape(atob(s.replace(/\n/g, '')))); }
@@ -41,11 +42,89 @@
       var d = document.getElementById('adminDlg');
       document.getElementById('adminState').textContent = token() ? '目前已登入：' + (load(LOGIN) || '管理員') + (load(LOGIN) === A.owner ? '（站長）' : '（協作者）') + '。' : '目前沒有登入。';
       document.getElementById('adminInput').value = '';
+      document.getElementById('teamBox').hidden = true;
       if (window.App) window.App.conv(d);
       d.showModal();
+      if (!token()) return;
+      // 舊版登入沒有記帳號名：補查一次
+      (load(LOGIN) ? Promise.resolve() : gh('https://api.github.com/user').then(function (u) { save(LOGIN, u.login); }))
+        .then(function () {
+          var who = load(LOGIN);
+          document.getElementById('adminState').textContent = '目前已登入：' + who + (who === A.owner ? '（站長）' : '（協作者）') + '。';
+          if (window.App) window.App.conv(document.getElementById('adminState'));
+          if (who === A.owner) renderTeam();
+        }, function () {});
     },
     edit: edit
   };
+
+  // ---------- 站長專用：邀請 / 移除協作者 ----------
+  var REPO = 'https://api.github.com/repos/' + A.repo;
+  var TOKEN_LINK = 'https://github.com/settings/tokens/new?scopes=public_repo&description=artale-skills';
+  function teamErr(e) {
+    if (e.status === 403) return '你的金鑰還沒開「Administration」權限，所以不能邀請。請到 GitHub 金鑰設定，把 Administration 設成 Read and write（見下方說明）。';
+    if (e.status === 404) return '找不到這個 GitHub 帳號，請確認拼字。';
+    if (e.status === 422) return '這個帳號不能邀請（可能是站長自己，或帳號有問題）。';
+    return e.message;
+  }
+  function renderTeam() {
+    var box = document.getElementById('teamBox');
+    box.hidden = false;
+    box.innerHTML = '<h4>👥 協作者（只有站長看得到）</h4>' +
+      '<div class="team-add"><input id="teamUser" placeholder="對方的 GitHub 帳號名稱" autocomplete="off"><button type="button" class="primary" id="teamInvite">邀請</button></div>' +
+      '<p class="muted small" id="teamMsg"></p><div id="teamList" class="muted small">讀取中…</div>' +
+      '<button type="button" class="btn" id="teamCopy">📋 複製給協作者的說明</button>' +
+      '<details class="muted small"><summary>邀請失敗說沒有權限？</summary><p>到 <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">GitHub 金鑰列表</a> → 點你建的 artale-skills 金鑰 → Edit → Repository permissions 裡的 <b>Administration</b> 設成 <b>Read and write</b> → Update。金鑰字串不會變，不用重新登入。</p></details>';
+    var msg = box.querySelector('#teamMsg'), list = box.querySelector('#teamList');
+    function say(t, bad) { msg.textContent = t; msg.className = 'small ' + (bad ? 'bad' : 'muted'); if (window.App) window.App.conv(msg); }
+    function refresh() {
+      Promise.all([
+        gh(REPO + '/collaborators?affiliation=direct&per_page=100').catch(function () { return []; }),
+        gh(REPO + '/invitations?per_page=100').catch(function (e) { return e.status === 403 ? null : []; })
+      ]).then(function (res) {
+        var people = (res[0] || []).filter(function (u) { return u.login !== A.owner; }), inv = res[1];
+        var html = '';
+        if (!people.length && !(inv && inv.length)) html = '目前還沒有協作者。';
+        people.forEach(function (u) { html += '<div class="team-row"><img src="' + esc(u.avatar_url) + '&s=40" alt=""><b>' + esc(u.login) + '</b><span class="tag ok">已加入</span><button type="button" class="ghost" data-rm="' + esc(u.login) + '">移除</button></div>'; });
+        (inv || []).forEach(function (i) { html += '<div class="team-row"><img src="' + esc(i.invitee.avatar_url) + '&s=40" alt=""><b>' + esc(i.invitee.login) + '</b><span class="tag wait">等待接受</span><button type="button" class="ghost" data-cancel="' + i.id + '">取消邀請</button></div>'; });
+        if (inv === null) html += '<p class="bad">（看不到待接受的邀請：金鑰還沒開 Administration 權限）</p>';
+        list.innerHTML = html;
+        list.querySelectorAll('[data-rm]').forEach(function (b) {
+          b.onclick = function () {
+            if (!confirm('確定移除 ' + b.dataset.rm + '？移除後他就不能再編輯。')) return;
+            gh(REPO + '/collaborators/' + encodeURIComponent(b.dataset.rm), { method: 'DELETE' }).then(function () { say('已移除 ' + b.dataset.rm); refresh(); }, function (e) { say(teamErr(e), true); });
+          };
+        });
+        list.querySelectorAll('[data-cancel]').forEach(function (b) {
+          b.onclick = function () { gh(REPO + '/invitations/' + b.dataset.cancel, { method: 'DELETE' }).then(function () { say('已取消邀請'); refresh(); }, function (e) { say(teamErr(e), true); }); };
+        });
+        if (window.App) window.App.conv(list);
+      });
+    }
+    box.querySelector('#teamInvite').onclick = function () {
+      var u = box.querySelector('#teamUser').value.trim().replace(/^@/, '');
+      if (!/^[A-Za-z0-9-]{1,39}$/.test(u)) return say('帳號名稱只會有英文、數字和 -，請再確認。', true);
+      say('邀請中…');
+      gh('https://api.github.com/users/' + encodeURIComponent(u)).then(function (info) {
+        return gh(REPO + '/collaborators/' + encodeURIComponent(info.login), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ permission: 'push' }) })
+          .then(function (j) {
+            say(j && j._status === 201 ? '已邀請 ' + info.login + ' ✓ 對方會收到 GitHub 通知 / Email。記得把「協作者說明」複製給他。' : info.login + ' 已經是協作者了。');
+            box.querySelector('#teamUser').value = ''; refresh();
+          });
+      }).catch(function (e) { say(teamErr(e), true); });
+    };
+    box.querySelector('#teamUser').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); box.querySelector('#teamInvite').click(); } });
+    box.querySelector('#teamCopy').onclick = function () {
+      var site = location.origin + location.pathname;
+      var text = '我邀請你一起編輯「Artale 技能加點站」🍊\n' +
+        '1. 先接受邀請：https://github.com/' + A.repo + '/invitations\n' +
+        '2. 申請金鑰（選項已勾好，拉到最下面按 Generate token，複製 ghp_ 開頭那串）：' + TOKEN_LINK + '\n' +
+        '3. 打開 ' + site + ' ，按最下面「🔧 管理員」，貼上金鑰按登入，就能編輯了。\n' +
+        '金鑰只存在你自己的瀏覽器，不要傳給別人。';
+      (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(function () { say('已複製 ✓ 直接貼給對方就好'); }, function () { prompt('複製這段文字給對方：', text); });
+    };
+    refresh();
+  }
 
   function wireLogin() {
     var d = document.getElementById('adminDlg'), st = document.getElementById('adminState');
