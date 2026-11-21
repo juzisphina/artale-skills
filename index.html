@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=23">
 </head>
 <body>
 <header class="top">
@@ -41,13 +41,9 @@
 
 <dialog id="adminDlg">
   <form method="dialog" class="dlg">
-    <h3>🔧 管理員 / 協作者登入</h3>
-    <p class="muted">只有站長（juzisphina）和站長在 GitHub 邀請的協作者能編輯推薦加點。貼上你自己的 GitHub 金鑰，金鑰只存在這台裝置的瀏覽器。</p>
-    <details class="muted small"><summary>怎麼申請金鑰？</summary>
-      <p><b>站長</b>：GitHub → Settings → Developer settings → Fine-grained tokens，只選 artale-skills，Contents 設 Read and write；想直接在這裡邀請協作者，再把 Administration 也設成 Read and write。</p>
-      <p><b>協作者</b>：先接受站長的 GitHub 邀請，再到 <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=artale-skills" target="_blank" rel="noopener">這裡</a> 建立 classic token，只勾 <code>public_repo</code>。（GitHub 的 fine-grained token 不能用在別人的倉庫，所以協作者要用 classic。）</p>
-    </details>
-    <input id="adminInput" type="password" autocomplete="off" placeholder="github_pat_… 或 ghp_…">
+    <h3>🔧 編輯者登入</h3>
+    <p class="muted small" id="adminIntro">僅限受邀的編輯者使用。</p>
+    <input id="adminInput" type="password" autocomplete="off" placeholder="貼上你的 GitHub 金鑰">
     <p class="muted small" id="adminState"></p>
     <div id="teamBox" class="team" hidden></div>
     <div class="dlg-row">
@@ -59,11 +55,11 @@
   </form>
 </dialog>
 
-<script src="data/classes.js?v=22"></script>
+<script src="data/classes.js?v=23"></script>
 <script src="data/builds.js"></script>
 <script src="config.js"></script>
-<script src="engine.js?v=22"></script>
-<script src="admin.js?v=22"></script>
-<script src="app.js?v=22"></script>
+<script src="engine.js?v=23"></script>
+<script src="admin.js?v=23"></script>
+<script src="app.js?v=23"></script>
 </body>
 </html>

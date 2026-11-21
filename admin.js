@@ -39,8 +39,13 @@
       return gh(API + '?ref=' + A.branch).then(function (j) { window.BUILDS = parseBuilds(b64decode(j.content)); }, function () {});
     },
     openLogin: function () {
-      var d = document.getElementById('adminDlg');
-      document.getElementById('adminState').textContent = token() ? '目前已登入：' + (load(LOGIN) || '管理員') + (load(LOGIN) === A.owner ? '（站長）' : '（協作者）') + '。' : '目前沒有登入。';
+      var d = document.getElementById('adminDlg'), on = !!token();
+      // 沒登入：只有輸入框 + 登入；已登入：只顯示帳號 + 登出（站長另有協作者區塊）
+      document.getElementById('adminIntro').hidden = on;
+      document.getElementById('adminInput').hidden = on;
+      document.getElementById('adminSave').hidden = on;
+      document.getElementById('adminOut').hidden = !on;
+      document.getElementById('adminState').textContent = on ? '目前已登入：' + (load(LOGIN) || '…') + (load(LOGIN) ? (load(LOGIN) === A.owner ? '（站長）' : '（協作者）') : '') + '。' : '';
       document.getElementById('adminInput').value = '';
       document.getElementById('teamBox').hidden = true;
       if (window.App) window.App.conv(d);
@@ -74,7 +79,8 @@
       '<div class="team-add"><input id="teamUser" placeholder="對方的 GitHub 帳號名稱" autocomplete="off"><button type="button" class="primary" id="teamInvite">邀請</button></div>' +
       '<p class="muted small" id="teamMsg"></p><div id="teamList" class="muted small">讀取中…</div>' +
       '<button type="button" class="btn" id="teamCopy">📋 複製給協作者的說明</button>' +
-      '<details class="muted small"><summary>邀請失敗說沒有權限？</summary><p>到 <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">GitHub 金鑰列表</a> → 點你建的 artale-skills 金鑰 → Edit → Repository permissions 裡的 <b>Administration</b> 設成 <b>Read and write</b> → Update。金鑰字串不會變，不用重新登入。</p></details>';
+      '<details class="muted small"><summary>邀請失敗說沒有權限？</summary><p>到 <a href="https://github.com/settings/personal-access-tokens" target="_blank" rel="noopener">GitHub 金鑰列表</a> → 點你建的 artale-skills 金鑰 → Edit → Repository permissions 裡的 <b>Administration</b> 設成 <b>Read and write</b> → Update。金鑰字串不會變，不用重新登入。</p></details>' +
+      '<details class="muted small"><summary>站長金鑰過期了怎麼辦？</summary><p>GitHub → Settings → Developer settings → <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained tokens</a>：Repository access 只選 artale-skills，權限加 <b>Contents</b> 和 <b>Administration</b>，都設 Read and write。產生後回這裡按「登出」，再貼上新金鑰登入。</p></details>';
     var msg = box.querySelector('#teamMsg'), list = box.querySelector('#teamList');
     function say(t, bad) { msg.textContent = t; msg.className = 'small ' + (bad ? 'bad' : 'muted'); if (window.App) window.App.conv(msg); }
     function refresh() {
