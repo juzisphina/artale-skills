@@ -103,12 +103,13 @@
   }
 
   // ---------- home ----------
-  function renderHome() {
+  function renderHome(keep) {
     var admin = !!(window.Admin && window.Admin.on());
     document.title = 'Artale 技能加點站';
     var html = '<section class="hero"><h1>新角色不用再<b>糾結加點</b></h1>' +
       '<p>每個職業兩套最常見的加法：<b>燒錢快練</b>（藥水換速度）和 <b>省錢性價比</b>（少喝水）。照著 Lv 一步步點，30、70、120 轉職前都會剛好把點數用完。</p>' +
-      '<div class="chips"><span class="chip">🧪 現行版 / 技改版</span><span class="chip">🎮 自己配點模擬器</span><span class="chip">✨ AI 點評</span><span class="chip">💬 玩家留言</span></div></section>';
+      '<div class="chips">' + CHIPS.map(function (x) { return '<button type="button" class="chip feat' + (jump === x.k ? ' on' : '') + '" data-chip="' + x.k + '">' + x.t + '</button>'; }).join('') + '</div>' +
+      '<div id="chipInfo"></div></section>';
     var groups = [];
     window.CLASSES.forEach(function (c) { if (groups.indexOf(c.group) < 0) groups.push(c.group); });
     groups.forEach(function (g) {
@@ -116,7 +117,7 @@
       window.CLASSES.filter(function (c) { return c.group === g; }).forEach(function (c) {
         var feat = (window.BUILDS[c.key] || {}).featured;
         var icons = feat && feat.length ? feat : c.icons.map(function (src) { return { img: src, name: '' }; });
-        html += '<a class="cls-card" href="#/' + c.key + '/' + c.vers[0] + '/burn"><div class="pic"><img src="' + c.img + '" alt="" loading="lazy"></div><div class="body">' +
+        html += '<a class="cls-card" data-key="' + c.key + '" href="#/' + c.key + '/' + c.vers[0] + '/burn"><div class="pic"><img src="' + c.img + '" alt="" loading="lazy"></div><div class="body">' +
           '<h3>' + esc(c.name) + '<small>' + c.en + '</small></h3><div class="muted small">' + esc(c.line) + '</div>' +
           '<div class="icons">' + icons.map(function (f) { return '<img class="ic" src="' + f.img + '" alt="" title="' + esc(f.name) + '" loading="lazy">'; }).join('') +
           (admin ? '<button class="feat-edit" data-feat="' + c.key + '" title="更換代表技能">✏️</button>' : '') + '</div></div></a>';
@@ -124,10 +125,44 @@
       html += '</div>';
     });
     app.innerHTML = html;
+    app.querySelectorAll('[data-chip]').forEach(function (b) {
+      b.onclick = function () { jump = jump === b.dataset.chip ? null : b.dataset.chip; renderHome(true); conv(app); };
+    });
+    showChip();
+    app.querySelectorAll('.cls-card').forEach(function (a) {
+      a.onclick = function (e) {
+        if (!jump || e.target.closest('[data-feat]')) return;
+        e.preventDefault(); openFor(a.dataset.key, jump);
+      };
+    });
     app.querySelectorAll('[data-feat]').forEach(function (b) {
       b.onclick = function (e) { e.preventDefault(); e.stopPropagation(); window.Admin.editFeatured(classOf(b.dataset.feat)); };
     });
-    window.scrollTo(0, 0);
+    if (!keep) window.scrollTo(0, 0);
+  }
+  // 首頁四個標籤：點了說明功能，並讓下一個點的職業直接打開那個功能
+  var CHIPS = [
+    { k: 'ver', t: '🧪 現行版 / 技改版', d: '每個職業都分兩版：<b>現行版</b>＝正式服現在的技能，<b>技改版</b>＝測試服 Tespia 改過的新技能。進職業頁後在最上面切換。' },
+    { k: 'sim', t: '🎮 自己配點模擬器', d: '自己從頭點到 Lv200，規則跟遊戲一樣（30、70、120 轉職前要先點完）。點完可以複製連結分享給朋友。' },
+    { k: 'ai', t: '✨ AI 點評', d: '貼上你自己的 Gemini 金鑰（免費申請），AI 會依你的預算和練功方式點評這套加點。金鑰只存在你的瀏覽器。' },
+    { k: 'cmt', t: '💬 玩家留言', d: '用 GitHub 帳號登入就能留言，每個職業、每個版本各有自己的留言區。' }
+  ];
+  var jump = null;
+  function showChip() {
+    var box = $('#chipInfo'), x = CHIPS.filter(function (y) { return y.k === jump; })[0];
+    document.body.classList.toggle('picking', !!x);
+    if (!x) { box.innerHTML = ''; return; }
+    var last = classOf(load('askills.last'));
+    box.innerHTML = '<div class="chip-info"><p>' + x.d + '</p><div class="row">' +
+      (last ? '<button type="button" class="primary" id="chipLast">打開「' + esc(last.name) + '」</button>' : '') +
+      '<button type="button" class="ghost" id="chipPick">' + (last ? '或' : '') + '選一個職業 ↓</button></div></div>';
+    if (last) $('#chipLast').onclick = function () { openFor(last.key, jump); };
+    $('#chipPick').onclick = function () { var g = $('.grp'); if (g) g.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+  }
+  function openFor(key, what) {
+    var c = classOf(key); if (!c) return;
+    jump = null; document.body.classList.remove('picking');
+    go(c.key, c.vers[0], what === 'sim' ? 'sim' : 'burn', what === 'ai' || what === 'cmt' ? { to: what } : {});
   }
 
   // ---------- class page ----------
@@ -165,6 +200,11 @@
     if (tab === 'sim') renderSim(ctx); else renderBuild(ctx);
     renderAI(ctx);
     renderGiscus(c.key + '-' + ver);
+    save('askills.last', c.key);
+    if (q.to === 'ai' || q.to === 'cmt') {
+      var tgt = $(q.to === 'ai' ? '#aiCard' : '#cmtCard');
+      setTimeout(function () { tgt.scrollIntoView({ behavior: 'smooth', block: 'start' }); tgt.classList.add('flash'); setTimeout(function () { tgt.classList.remove('flash'); }, 1600); }, 60);
+    }
   }
   function tabBtn(key, title, sub, tab) {
     return '<button class="tab ' + key + (key === tab ? ' on' : '') + '" data-tab="' + key + '"><b>' + title + '</b><span>' + sub + '</span></button>';
