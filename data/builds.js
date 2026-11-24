@@ -54,7 +54,7 @@ window.BUILDS = {
           "聖靈祈禱每次要扣 HP、MP 各 500~1000",
           "前中期一樣靠藍水撐"
         ],
-        "steps": "b_snailThrow:3 b_nimbleFeet:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 holyArrow:11 magicResistance:1 dispel:3 holySymbol:30 summonHolyDragon:15 magicResistance:20 monsterTransformation:30 mysticDoor:20 dispel:20 holyArrow:27 patch_2321011:10 patch_2321012:20 mapleWarrior:9 heavensDoor:30 genesis:30 angelRay:30 summonDragon:15 resurrection:1 infinity:1 holyShield:1",
+        "steps": "b_snailThrow:3 b_nimbleFeet:3 magicArrow:1 magicPurify:16 magicExtension:10 magicGuard:20 magicShield:20 teleport:1 massHeal:30 magicDrain:20 teleport:20 holyLight:20 angelBlessing:20 holyArrow:11 magicResistance:1 dispel:3 holySymbol:30 summonHolyDragon:15 magicResistance:20 monsterTransformation:30 mysticDoor:20 dispel:20 holyArrow:27 patch_2321011:10 mapleWarrior:9 heavensDoor:30 genesis:30 angelRay:30 summonDragon:15 resurrection:1 infinity:1 holyShield:1",
         "notes": {
           "3": "神聖祈禱要 30 級才能點 4 轉的聖靈祈禱，3 轉就先滿。",
           "4": "聖靈祈禱 10 → 天使之箭 30，祈禱期間天使之箭是 3 段攻擊。"
