@@ -13,8 +13,8 @@ window.CLASSES = [
    "img/skills/patch_2321012.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "INT 為主力，LUK 依裝備需求補到剛好即可（大多 4 起跳，換裝再補）。",
@@ -37,8 +37,8 @@ window.CLASSES = [
    "img/skills/patch_2120000.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "INT 為主力，LUK 依裝備需求補到剛好即可（大多 4 起跳，換裝再補）。",
@@ -61,8 +61,8 @@ window.CLASSES = [
    "img/skills/patch_2220000.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "INT 為主力，LUK 依裝備需求補到剛好即可（大多 4 起跳，換裝再補）。",
@@ -85,8 +85,8 @@ window.CLASSES = [
    "img/skills/monsterMagnet.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "STR、DEX 越高越好，其他 4。DEX 跟著命中走（夠命中就好），其他全部點 STR。",
@@ -120,8 +120,8 @@ window.CLASSES = [
    "img/skills/patch_1221005.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "STR、DEX 越高越好，其他 4。DEX 跟著命中走（夠命中就好），其他全部點 STR。",
@@ -157,8 +157,8 @@ window.CLASSES = [
    "img/skills/patch_1321005.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "STR、DEX 越高越好，其他 4。DEX 跟著命中走（夠命中就好），其他全部點 STR。",
@@ -192,8 +192,8 @@ window.CLASSES = [
    "img/skills/concentrate.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "DEX 為主力，STR 依裝備需求補（大多 4 起跳）。",
@@ -216,8 +216,8 @@ window.CLASSES = [
    "img/skills/snipe.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "DEX 為主力，STR 依裝備需求補（大多 4 起跳）。",
@@ -240,8 +240,8 @@ window.CLASSES = [
    "img/skills/patch_4221002.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "LUK 為主力，DEX 依裝備需求補；其他 4。",
@@ -264,8 +264,8 @@ window.CLASSES = [
    "img/skills/tripleThrow.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "LUK 為主力，DEX 依裝備需求補；其他 4。",
@@ -288,8 +288,8 @@ window.CLASSES = [
    "img/skills/patch_5121009.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "STR 為主力，DEX 依裝備需求與命中補。",
@@ -312,8 +312,8 @@ window.CLASSES = [
    "img/skills/preciseCannon.png"
   ],
   "vers": [
-   "old",
-   "new"
+   "new",
+   "old"
   ],
   "group": "冒險家",
   "ap": "DEX 為主力，STR 依裝備需求補。",
@@ -436,6 +436,6 @@ window.CLASSES = [
 ];
 
 window.VERSIONS = [
-  { key: 'old', name: '現行版', sub: '目前正式服（未技改）' },
-  { key: 'new', name: '技改版', sub: 'Tespia v2 測試服資料，正式上線可能再改' }
+  { key: 'new', name: '技改版', sub: '技改版已正式上線' },
+  { key: 'old', name: '旧版', sub: '技改前的旧版技能' }
 ];
