@@ -55,6 +55,8 @@ ok(DM.parseLeft('44:26') > 44.43 && DM.parseLeft('44:26') < 44.44 && DM.parseLef
 const dp = DM.plan(DJ.floors, 'solo', [{ floor: 34, left: '47:00' }, { floor: 36, left: '44:26' }, { floor: 38, left: '38:32' }], 1, 60);
 ok(dp.list.length === 3 && dp.best.floor === 34 && Math.abs(dp.list[0].rate - 233 / 14) < 1e-9, '停層計算：選每分鐘分數最高的樓層');
 ok(DM.nextBelt(DJ.belts, 5359).pts === 8500 && DM.nextBelt(DJ.belts, 9000) === null, '下一條腰帶');
+ok(DJ.bosses.length >= 10 && DJ.bosses.every(b => b.name && b.s1 > 0), '道場 BOSS 招式資料');
+ok(DJ.records.length === 0 || DJ.records.every(r => !/主教/.test(r.cls) || r.left !== '44:26'), '道場不放站長個人紀錄');
 console.log('✓ 武陵道場：47 層、累計 ' + dc[47] + ' 分、計算器');
 
 console.log(fail ? `\n${fail} 個問題` : '\n全部通過');

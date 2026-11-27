@@ -55,7 +55,7 @@
       '<p>' + (left > 0 ? '賽季還剩 <b>' + left + ' 天</b>（到 2027/1/19 維護前）' : '本賽季已結束') + '・共 ' + S.floors + ' 層・限時 ' + S.minutes + ' 分鐘・' + S.minLv + ' 等以上</p>' +
       '<div class="chips">' + D.belts.map(function (b) { return '<span class="chip">' + esc(b.name) + ' <b>' + fmt(b.pts) + '</b> 分</span>'; }).join('') +
       '<a class="chip" href="' + esc(S.source) + '" target="_blank" rel="noopener">📢 官方公告</a></div>' +
-      '<nav class="dojo-nav">' + [['calc', '🧮 停層計算器'], ['floors', '📋 樓層表'], ['recs', '🏅 職業紀錄'], ['shop', '🪙 硬幣商店'], ['rules', '📌 規則'], ['cmtCard', '💬 留言']]
+      '<nav class="dojo-nav">' + [['calc', '🧮 停層計算器'], ['floors', '📋 樓層表'], ['boss', '👹 BOSS 招式'], ['recs', '🏅 職業紀錄'], ['shop', '🪙 硬幣商店'], ['rules', '📌 規則'], ['cmtCard', '💬 留言']]
         .map(function (x) { return '<a href="#" data-jump="' + x[0] + '">' + x[1] + '</a>'; }).join('') + '</nav></section>' +
 
       // calculator
@@ -73,9 +73,12 @@
       // floors
       '<section class="card" id="floors"><h2>📋 47 層分數表 <span class="muted">官方公告分數；★ = 分數比前後層高很多的樓層</span>' +
       (admin ? '<button type="button" class="btn edit-btn" id="dojoEdit">✏️ 編輯 BOSS／血量／紀錄</button>' : '') + '</h2>' +
-      '<p class="muted small">Artale 的道場 BOSS 名單和血量，官方公告沒有寫，目前網路上也還沒有人整理（查到的都是本家楓之谷的道場，樓層和血量都對不上，所以不放）。打過的玩家歡迎在下面留言補充，確認後會更新到表裡。</p>' +
+      '<p class="muted small">第 2 季每層是哪隻 BOSS、血量多少，官方沒有公布，也還沒有人整理完。下面「👹 BOSS 招式」有第 1 季玩家整理的 BOSS 和傷害可以參考。打過的玩家歡迎留言補充，確認後會更新到表裡。</p>' +
       '<div class="tbl-wrap"><table class="dojo-tbl"><thead><tr><th>層</th><th>BOSS</th><th>血量</th><th>個人</th><th>累計</th><th>組隊</th><th>要注意</th></tr></thead><tbody>' +
       floorRows(D.floors) + '</tbody></table></div></section>' +
+
+      // bosses (season 1 player notes)
+      bossHtml(D) +
 
       // records
       '<section class="card" id="recs"><h2>🏅 職業實測紀錄 <span class="muted">大家打到哪、花多久</span></h2>' + recsHtml(D.records) +
@@ -118,6 +121,18 @@
         '<td>' + (x.hp ? esc(x.hp) : '<span class="faint">—</span>') + '</td><td><b>' + x.solo + '</b></td><td>' + c[x.f] + '</td><td>' + x.party + '</td>' +
         '<td class="l small">' + esc(x.note || '') + '</td></tr>';
     }).join('');
+  }
+
+  function bossHtml(D) {
+    var B = D.bosses || [], T = D.s2tips || [];
+    if (!B.length && !T.length) return '';
+    return '<section class="card" id="boss"><h2>👹 BOSS 招式與傷害 <span class="muted">要注意什麼、會被打多痛</span></h2>' +
+      (T.length ? '<p class="notice">⚠️ <b>第 2 季已知：</b></p><ul class="tips">' + T.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
+      (B.length ? '<p class="muted small">' + esc(D.bossNote || '') + '</p>' +
+        '<div class="tbl-wrap"><table class="dojo-tbl" style="min-width:600px"><thead><tr><th>第1季層</th><th>BOSS</th><th>會被打多痛</th><th>怎麼打</th></tr></thead><tbody>' +
+        B.map(function (b) { return '<tr><td>' + esc(b.s1) + '</td><td class="l"><b>' + esc(b.name) + '</b></td><td class="l small">' + esc(b.dmg || '—') + '</td><td class="l small">' + esc(b.tip || '') + '</td></tr>'; }).join('') +
+        '</tbody></table></div>' : '') +
+      '<p class="muted small">血量（HP）目前還沒有人公開，打過的玩家歡迎在最下面留言補充。</p></section>';
   }
 
   function recsHtml(recs) {
