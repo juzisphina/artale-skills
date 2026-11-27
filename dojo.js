@@ -130,10 +130,10 @@
       ((D.s2new || []).length ? '<div class="boss-new">' + D.s2new.map(function (b) { return '<div class="boss-card"><img src="' + esc(b.img) + '" alt="' + esc(b.name) + '" loading="lazy"><b>' + esc(b.name) + '</b><small>' + esc(b.tip) + '</small></div>'; }).join('') + '</div>' : '') +
       (T.length ? '<p class="notice">⚠️ <b>第 2 季已知：</b></p><ul class="tips">' + T.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
       (B.length ? '<p class="muted small">' + esc(D.bossNote || '') + '</p>' +
-        '<div class="tbl-wrap"><table class="dojo-tbl" style="min-width:600px"><thead><tr><th>第1季層</th><th>BOSS</th><th>會被打多痛</th><th>怎麼打</th></tr></thead><tbody>' +
-        B.map(function (b) { return '<tr><td>' + esc(b.s1) + '</td><td class="l boss-cell">' + (b.img ? '<img src="' + esc(b.img) + '" alt="" loading="lazy">' : '<span class="no-img">?</span>') + '<b>' + esc(b.name) + '</b></td><td class="l small">' + esc(b.dmg || '—') + '</td><td class="l small">' + esc(b.tip || '') + '</td></tr>'; }).join('') +
+        '<div class="tbl-wrap"><table class="dojo-tbl" style="min-width:820px"><thead><tr><th>第1季層</th><th>BOSS</th><th>等級</th><th>圖鑑血量<br><small>野外版</small></th><th>命中需求</th><th>會被打多痛</th><th>怎麼打</th></tr></thead><tbody>' +
+        B.map(function (b) { return '<tr><td>' + esc(b.s1) + '</td><td class="l boss-cell">' + (b.img ? '<img src="' + esc(b.img) + '" alt="" loading="lazy">' : '<span class="no-img">?</span>') + '<b>' + esc(b.name) + '</b></td><td>' + (b.lv ? 'Lv' + esc(b.lv) : '—') + '</td><td>' + esc(b.hp || '—') + '</td><td>' + esc(b.acc || '—') + '</td><td class="l small">' + esc(b.dmg || '—') + '</td><td class="l small">' + esc(b.tip || '') + '</td></tr>'; }).join('') +
         '</tbody></table></div>' : '') +
-      '<p class="muted small">血量（HP）目前還沒有人公開，打過的玩家歡迎在最下面留言補充。</p></section>';
+      '<p class="muted small">道場裡每層 BOSS 的真實血量還沒有人公開，打過的玩家歡迎在最下面留言補充。</p></section>';
   }
 
   function recsHtml(recs) {
