@@ -73,8 +73,8 @@
       // floors
       '<section class="card" id="floors"><h2>📋 47 層分數表 <span class="muted">官方公告分數；★ = 分數比前後層高很多的樓層</span>' +
       (admin ? '<button type="button" class="btn edit-btn" id="dojoEdit">✏️ 編輯 BOSS／血量／紀錄</button>' : '') + '</h2>' +
-      '<p class="muted small">第 2 季每層是哪隻 BOSS、血量多少，官方沒有公布，也還沒有人整理完。下面「👹 BOSS 招式」有第 1 季玩家整理的 BOSS 和傷害可以參考。打過的玩家歡迎留言補充，確認後會更新到表裡。</p>' +
-      '<div class="tbl-wrap"><table class="dojo-tbl"><thead><tr><th>層</th><th>BOSS</th><th>血量</th><th>個人</th><th>累計</th><th>組隊</th><th>要注意</th></tr></thead><tbody>' +
+      '<p class="muted small">每層 BOSS 是看第 2 季全程通關影片一層一層對出來的。等級、圖鑑血量、命中需求是遊戲圖鑑裡道場版的數字；第 2 季實際打起來比圖鑑血量快很多，血量只能用來比較哪隻比較硬。「參考用時」是一位聖騎士（乾表約 7400）單刷每層花的時間（含走位、換層，約 ±3 秒），可以拿來估自己大概多久。有錯歡迎留言。</p>' +
+      '<div class="tbl-wrap"><table class="dojo-tbl" style="min-width:760px"><thead><tr><th>層</th><th>BOSS</th><th>等級</th><th>圖鑑血量</th><th>命中需求</th><th>參考用時</th><th>個人</th><th>累計</th><th>組隊</th><th>要注意</th></tr></thead><tbody>' +
       floorRows(D.floors) + '</tbody></table></div></section>' +
 
       // bosses (season 1 player notes)
@@ -118,7 +118,7 @@
       var prev = i ? floors[i - 1].solo : 0, next = floors[i + 1] ? floors[i + 1].solo : 0;
       var star = x.solo >= prev + 3 && x.solo > next;
       return '<tr' + (star ? ' class="star"' : '') + '><td>' + x.f + (star ? ' ★' : '') + '</td><td class="l">' + (x.boss ? esc(x.boss) : '<span class="faint">待補</span>') + '</td>' +
-        '<td>' + (x.hp ? esc(x.hp) : '<span class="faint">—</span>') + '</td><td><b>' + x.solo + '</b></td><td>' + c[x.f] + '</td><td>' + x.party + '</td>' +
+        '<td>' + (x.lv ? 'Lv' + esc(x.lv) : '<span class="faint">—</span>') + '</td><td>' + (x.hp ? esc(x.hp) : '<span class="faint">—</span>') + '</td><td>' + (x.acc ? esc(x.acc) : '<span class="faint">—</span>') + '</td><td>' + (x.time ? esc(x.time) : '<span class="faint">—</span>') + '</td><td><b>' + x.solo + '</b></td><td>' + c[x.f] + '</td><td>' + x.party + '</td>' +
         '<td class="l small">' + esc(x.note || '') + '</td></tr>';
     }).join('');
   }
@@ -130,10 +130,10 @@
       ((D.s2new || []).length ? '<div class="boss-new">' + D.s2new.map(function (b) { return '<div class="boss-card"><img src="' + esc(b.img) + '" alt="' + esc(b.name) + '" loading="lazy"><b>' + esc(b.name) + '</b><small>' + esc(b.tip) + '</small></div>'; }).join('') + '</div>' : '') +
       (T.length ? '<p class="notice">⚠️ <b>第 2 季已知：</b></p><ul class="tips">' + T.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>' : '') +
       (B.length ? '<p class="muted small">' + esc(D.bossNote || '') + '</p>' +
-        '<div class="tbl-wrap"><table class="dojo-tbl" style="min-width:820px"><thead><tr><th>第1季層</th><th>BOSS</th><th>等級</th><th>圖鑑血量<br><small>野外版</small></th><th>命中需求</th><th>會被打多痛</th><th>怎麼打</th></tr></thead><tbody>' +
-        B.map(function (b) { return '<tr><td>' + esc(b.s1) + '</td><td class="l boss-cell">' + (b.img ? '<img src="' + esc(b.img) + '" alt="" loading="lazy">' : '<span class="no-img">?</span>') + '<b>' + esc(b.name) + '</b></td><td>' + (b.lv ? 'Lv' + esc(b.lv) : '—') + '</td><td>' + esc(b.hp || '—') + '</td><td>' + esc(b.acc || '—') + '</td><td class="l small">' + esc(b.dmg || '—') + '</td><td class="l small">' + esc(b.tip || '') + '</td></tr>'; }).join('') +
+        '<div class="tbl-wrap"><table class="dojo-tbl" style="min-width:820px"><thead><tr><th>層</th><th>BOSS</th><th>等級</th><th>圖鑑血量</th><th>命中需求</th><th>會被打多痛</th><th>怎麼打</th></tr></thead><tbody>' +
+        B.map(function (b) { return '<tr><td>' + esc(b.s2 || b.s1) + (b.s2 && b.s2 !== b.s1 ? '<br><small class="muted">（第1季 ' + esc(b.s1) + '）</small>' : '') + '</td><td class="l boss-cell">' + (b.img ? '<img src="' + esc(b.img) + '" alt="" loading="lazy">' : '<span class="no-img">?</span>') + '<b>' + esc(b.name) + '</b></td><td>' + (b.lv ? 'Lv' + esc(b.lv) : '—') + '</td><td>' + esc(b.hp || '—') + '</td><td>' + esc(b.acc || '—') + '</td><td class="l small">' + esc(b.dmg || '—') + '</td><td class="l small">' + esc(b.tip || '') + '</td></tr>'; }).join('') +
         '</tbody></table></div>' : '') +
-      '<p class="muted small">道場裡每層 BOSS 的真實血量還沒有人公開，打過的玩家歡迎在最下面留言補充。</p></section>';
+      '<p class="muted small">打過的玩家歡迎在最下面留言補充第 2 季的傷害和打法。</p></section>';
   }
 
   function recsHtml(recs) {
