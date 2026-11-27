@@ -853,8 +853,9 @@ window.BUILDS = {
           "攻擊技能等級高、每發比較耗 MP",
           "輔助 / 防禦技能比較晚"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 luckySeven:20 haste:3 keenEyes:8 haste:20 darkSight:13 shurikenMastery:3 criticalThrow:30 shurikenMastery:20 shurikenBooster:20 drain:30 booster:20 recovery:1 windDemonShuriken:30 shadowClone:30 luckyCharm:5 doubleJump:5 mesoAttack:30 shadowWeb:20 alchemist:20 luckyCharm:16 tripleThrow:30 expertThrowingStarHandling:30 ninjaStorm:30 toxicVenom:30 shadowerInstinct:5 mapleWarrior:30 ninjaAmbushNL:30 shadowerInstinct:30 tauntNL:30 heroesWill:1 luckyCharm:20 doubleJump:20 recovery:20 darkSight:20 curse:20 doubleStab:20",
-        "notes": {}
+        "steps": "b_snailThrow:3 b_nimbleFeet:3 luckySeven:20 haste:3 keenEyes:8 haste:20 darkSight:13 booster:20 shurikenMastery:2",
+        "notes": {},
+        "maxLv": 37
       },
       "save": {
         "title": "省錢性價比",
