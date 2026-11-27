@@ -88,7 +88,8 @@
   function render() {
     var r = parseHash();
     var c = classOf(r.cls);
-    if (!c) renderHome();
+    if (r.cls === 'dojo' && window.Dojo && window.DOJO) window.Dojo.render(app, window.App);
+    else if (!c) renderHome();
     else {
       var ver = c.vers.indexOf(r.ver) >= 0 ? r.ver : c.vers[0];
       var tab = /^(burn|save|sim)$/.test(r.tab) ? r.tab : 'burn';
@@ -109,7 +110,8 @@
     var html = '<section class="hero"><h1>新角色不用再<b>糾結加點</b></h1>' +
       '<p>每個職業兩套最常見的加法：<b>燒錢快練</b>（藥水換速度）和 <b>省錢性價比</b>（少喝水）。照著 Lv 一步步點，30、70、120 轉職前都會剛好把點數用完。</p>' +
       '<div class="chips">' + CHIPS.map(function (x) { return '<button type="button" class="chip feat' + (jump === x.k ? ' on' : '') + '" data-chip="' + x.k + '">' + x.t + '</button>'; }).join('') + '</div>' +
-      '<div id="chipInfo"></div></section>';
+      '<div id="chipInfo"></div></section>' +
+      '<a class="dojo-banner" href="#/dojo"><span class="emo">🥋</span><span><b>武陵道場 Season 2</b><small>47 層分數表・停層計算器（打到第幾層重來最快）・硬幣商店</small></span><span class="go">→</span></a>';
     var groups = [];
     window.CLASSES.forEach(function (c) { if (groups.indexOf(c.group) < 0) groups.push(c.group); });
     groups.forEach(function (g) {
@@ -614,7 +616,7 @@
     box.appendChild(s);
   }
 
-  window.App = { render: render, toast: toast, ensureSkills: ensureSkills, skillMore: skillMore, preTag: preTag, isOpen: function (id) { return !!openSkills[id]; }, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
+  window.App = { render: render, toast: toast, giscus: renderGiscus, ensureSkills: ensureSkills, skillMore: skillMore, preTag: preTag, isOpen: function (id) { return !!openSkills[id]; }, conv: function (el) { if (lang === 'cn' && converter) conv(el); } };
   $('#adminBtn').onclick = function () { window.Admin.openLogin(); };
   if (window.Admin && window.Admin.on()) window.Admin.loadFresh().then(render); else render();
 })();

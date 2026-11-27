@@ -473,6 +473,19 @@
     });
   }
 
+  // 武陵道場資料（data/dojo.js）：同樣先拿 GitHub 上最新的 sha 再覆蓋
+  Admin.saveDojo = function (data, label) {
+    var url = 'https://api.github.com/repos/' + A.repo + '/contents/data/dojo.js';
+    return gh(url + '?ref=' + A.branch).then(function (j) {
+      var src = '// 武陵道場 Season 2（官方 11/24 更新公告）。boss / hp / note / records 可在網站「管理員」編輯，存檔會覆蓋這個檔案。\n' +
+        'window.DOJO = ' + JSON.stringify(data, null, 2) + ';\n';
+      return gh(url, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: '網站編輯：' + label + (load(LOGIN) ? '（by ' + load(LOGIN) + '）' : ''), content: b64encode(src), sha: j.sha, branch: A.branch })
+      });
+    });
+  };
+
   window.Admin = Admin;
   document.addEventListener('DOMContentLoaded', wireLogin);
   if (document.readyState !== 'loading') wireLogin();

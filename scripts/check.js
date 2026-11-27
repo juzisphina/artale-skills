@@ -42,5 +42,20 @@ ok(E.whyNotRemove(P, cur, 'swordMastery') === 'dep', '降前置會擋');
 ok(E.whyNotRemove(P, cur, 'slashBlast') === 'gate', '降 1 轉會讓 2 轉失效要擋');
 ok(E.whyNotAdd(P, { b_recovery: 3, b_nimbleFeet: 3 }, 15, 'b_snailThrow') === 'sp', '新手只有 6 點');
 
+// 武陵道場資料與停層計算
+const dctx = vm.createContext({ window: {} });
+for (const f of ['data/dojo.js', 'dojo.js']) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), dctx);
+const DJ = dctx.window.DOJO, DM = dctx.window.Dojo;
+for (const f of ['app.js', 'admin.js', 'dojo.js', 'engine.js']) { try { new vm.Script(fs.readFileSync(path.join(root, f), 'utf8')); } catch (e) { ok(false, f + ' 語法錯誤：' + e.message); } }
+ok(DJ.floors.length === 47 && DJ.floors.every((x, i) => x.f === i + 1 && x.solo > 0 && x.party > 0), '道場 47 層連號且都有分數');
+const dc = DM.cumulative(DJ.floors, 'solo');
+ok(dc[36] === 274 && dc[47] === 627, '道場個人累計分數（36 層 274、47 層 627）');
+ok(DM.cumulative(DJ.floors, 'party')[47] === 557, '道場組隊累計分數（47 層 557）');
+ok(DM.parseLeft('44:26') > 44.43 && DM.parseLeft('44:26') < 44.44 && DM.parseLeft('abc') === null && DM.parseLeft('61:00') === null, '計時器時間解析');
+const dp = DM.plan(DJ.floors, 'solo', [{ floor: 34, left: '47:00' }, { floor: 36, left: '44:26' }, { floor: 38, left: '38:32' }], 1, 60);
+ok(dp.list.length === 3 && dp.best.floor === 34 && Math.abs(dp.list[0].rate - 233 / 14) < 1e-9, '停層計算：選每分鐘分數最高的樓層');
+ok(DM.nextBelt(DJ.belts, 5359).pts === 8500 && DM.nextBelt(DJ.belts, 9000) === null, '下一條腰帶');
+console.log('✓ 武陵道場：47 層、累計 ' + dc[47] + ' 分、計算器');
+
 console.log(fail ? `\n${fail} 個問題` : '\n全部通過');
 process.exit(fail ? 1 : 0);

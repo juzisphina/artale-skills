@@ -381,3 +381,66 @@ dialog#featDlg .dlg { max-width: none; }
   .sk .btns button.mx { height: 38px; }
   input, select, textarea { font-size: 16px !important; }
 }
+
+/* ---------- 🥋 武陵道場 ---------- */
+a.pill { color: inherit; text-decoration: none; }
+.crumb { margin: 0 0 10px; font-size: 14px; }
+.crumb a { color: var(--accent-ink); text-decoration: none; }
+.dojo-banner {
+  display: flex; align-items: center; gap: 14px; margin: -8px 0 22px; padding: 14px 18px;
+  border-radius: 18px; background: var(--card); border: 1.5px solid var(--accent); box-shadow: var(--shadow);
+  color: inherit; text-decoration: none;
+}
+.dojo-banner:hover { background: var(--accent-soft); }
+.dojo-banner .emo { font-size: 30px; }
+.dojo-banner b { display: block; font-size: 17px; }
+.dojo-banner small { color: var(--soft); font-size: 13px; }
+.dojo-banner .go { margin-left: auto; font-size: 22px; color: var(--accent-ink); }
+.dojo-hero p b { color: var(--accent-ink); }
+.dojo-hero .chips a.chip { color: inherit; text-decoration: none; }
+.dojo-nav { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 14px; font-size: 14px; }
+.dojo-nav a { color: var(--accent-ink); text-decoration: none; font-weight: 700; }
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 12px; }
+#floors .tbl-wrap { max-height: 560px; overflow-y: auto; }
+.dojo-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.dojo-tbl th, .dojo-tbl td { padding: 6px 9px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+.dojo-tbl td.l { text-align: left; white-space: normal; min-width: 7em; }
+.dojo-tbl thead th { position: sticky; top: 0; background: var(--accent-soft); font-weight: 700; z-index: 1; }
+.dojo-tbl tr.star td { background: color-mix(in srgb, var(--accent) 12%, var(--card)); }
+.dojo-tbl tr.star td:first-child { color: var(--accent-ink); font-weight: 700; }
+.dojo-tbl tr.best td { background: color-mix(in srgb, var(--ok) 16%, var(--card)); font-weight: 700; }
+.dojo-tbl .faint { color: var(--faint); }
+.dojo-tbl.shop tr.r-wk td:last-child { color: var(--ok); font-weight: 700; }
+.dojo-tbl.ed input { width: 100%; min-width: 7em; font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: inherit; }
+.calc-top { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: flex-end; margin: 10px 0 12px; }
+.calc-top label { display: grid; gap: 4px; font-size: 13px; color: var(--soft); }
+.calc-top input { width: 8em; }
+#calc input, .rec-ed input { font: inherit; padding: 6px 8px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: inherit; }
+#calc input:focus, .rec-ed input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.calc-rows { display: grid; gap: 8px; margin-bottom: 10px; }
+.calc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 14px; }
+.calc-row .cF { width: 4.2em; }
+.calc-row .cL { width: 6.5em; }
+.calc-row .x, .rec-ed .x { border: 0; background: none; color: var(--faint); font-size: 15px; padding: 4px 6px; cursor: pointer; }
+.calc-row .x:hover, .rec-ed .x:hover { color: var(--bad); }
+.calc-out { margin-top: 14px; }
+.verdict { margin-top: 12px; padding: 12px 14px; border-radius: 14px; background: var(--accent-soft); font-size: 14.5px; line-height: 1.75; }
+.belts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; }
+.belt { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 2px; }
+.belt span { color: var(--accent-ink); font-weight: 700; font-size: 14px; }
+.belt small { color: var(--soft); }
+.rec-ed { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 8px; }
+@media (max-width: 560px) {
+  .dojo-banner { padding: 12px 14px; gap: 10px; }
+  .dojo-tbl { font-size: 13px; }
+  .dojo-tbl th, .dojo-tbl td { padding: 5px 6px; }
+  .top .pill { padding: 5px 9px; font-size: 13px; }
+}
+.top .pill { white-space: nowrap; }
+.calc-row { flex-wrap: nowrap; }
+.calc-row .cF { width: 3.6em; }
+.calc-row .cL { width: 6em; }
+@media (max-width: 560px) {
+  .top .brand span { font-size: 15px; }
+  .top-actions { gap: 6px; }
+}
