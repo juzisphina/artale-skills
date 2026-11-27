@@ -322,8 +322,11 @@ window.BUILDS = {
           "攻擊技能等級高、每發比較耗 MP",
           "輔助 / 防禦技能比較晚"
         ],
-        "steps": "b_nimbleFeet:3 b_recovery:3 slashBlast:1 powerStrike:20 slashBlast:20 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:3 swordMastery:3 finalAttackSword:30 swordMastery:20 swordBooster:20 rage:20 powerReflection:30 ironBody:4 combatMastery:1 brandishSword:30 combatMastery:30 panicSword:30 tigerOfFury:30 guardCancel:20 mpRecoveryHero:11 advancedCombatMastery:10 monsterMagnet:30 berserk:30 advancedCombatMastery:30 mapleWarrior:30 powerGuard:30 sturdyArmor:30 absolutecity:30 ultimateShield:30 ultimateSpear:30 heroesWill:1 mpRecoveryHero:20 shieldMastery:20 ironBody:20 hpRecovery:16 hpRestore:8 axeMastery:20 axeBooster:20 finalAttackAxe:30",
-        "notes": {}
+        "steps": "b_snailThrow:3 b_nimbleFeet:3 slashBlast:1 powerStrike:20 hpRecovery:5 hpBoost:10 hpRestore:3 ironBody:19 hpRecovery:8 rage:20 swordMastery:2",
+        "notes": {
+          "2": "激勵機"
+        },
+        "maxLv": 37
       },
       "save": {
         "title": "省錢性價比",
