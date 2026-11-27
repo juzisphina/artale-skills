@@ -12,7 +12,7 @@
     floors.forEach(function (x) { s += +x[mode] || 0; c[x.f] = s; });
     return c;
   }
-  // "44:26" → 44.43 minutes left; null when not a time
+  // "45:30" → 45.5 minutes left; null when not a time
   function parseLeft(t) {
     var m = String(t || '').trim().match(/^(\d{1,2})[:：.](\d{1,2})$/) || String(t || '').trim().match(/^(\d{1,2})$/);
     if (!m) return null;
@@ -60,7 +60,7 @@
 
       // calculator
       '<section class="card" id="calc"><h2>🧮 停層計算器 <span class="muted">打到第幾層就重來最快？</span></h2>' +
-      '<p class="muted small">打一場時，在幾個樓層<b>打完的瞬間</b>看一下右上角倒數計時器，填進來（例：44:26）。會自動算出停在哪一層、每小時拿最多分。</p>' +
+      '<p class="muted small">打一場時，在幾個樓層<b>打完的瞬間</b>看一下右上角倒數計時器，填進來（例：45:30）。會自動算出停在哪一層、每小時拿最多分。</p>' +
       '<div class="calc-top">' +
       '<label>模式<div class="seg" id="modeSeg"><button type="button" data-m="solo"' + (st.mode === 'solo' ? ' class="on"' : '') + '>個人</button><button type="button" data-m="party"' + (st.mode === 'party' ? ' class="on"' : '') + '>組隊</button></div></label>' +
       '<label>目前訓練分數<input id="cCur" type="number" min="0" inputmode="numeric" value="' + esc(st.cur) + '" placeholder="0"></label>' +
@@ -73,7 +73,7 @@
       // floors
       '<section class="card" id="floors"><h2>📋 47 層分數表 <span class="muted">官方公告分數；★ = 分數比前後層高很多的樓層</span>' +
       (admin ? '<button type="button" class="btn edit-btn" id="dojoEdit">✏️ 編輯 BOSS／血量／紀錄</button>' : '') + '</h2>' +
-      '<p class="muted small">BOSS 名字、血量和要注意的招式，官方沒有公布，打過的玩家歡迎在下面留言補充，確認後會更新到表裡。</p>' +
+      '<p class="muted small">Artale 的道場 BOSS 名單和血量，官方公告沒有寫，目前網路上也還沒有人整理（查到的都是本家楓之谷的道場，樓層和血量都對不上，所以不放）。打過的玩家歡迎在下面留言補充，確認後會更新到表裡。</p>' +
       '<div class="tbl-wrap"><table class="dojo-tbl"><thead><tr><th>層</th><th>BOSS</th><th>血量</th><th>個人</th><th>累計</th><th>組隊</th><th>要注意</th></tr></thead><tbody>' +
       floorRows(D.floors) + '</tbody></table></div></section>' +
 
@@ -106,7 +106,7 @@
 
   function rowHtml(r, i) {
     return '<div class="calc-row" data-i="' + i + '"><span>打完第</span><input class="cF" type="number" min="1" max="47" inputmode="numeric" value="' + esc(r.floor) + '"><span>層，剩</span>' +
-      '<input class="cL" type="text" inputmode="numeric" placeholder="例 44:26" value="' + esc(r.left) + '"><button type="button" class="x" title="刪除這列" aria-label="刪除這列">✕</button></div>';
+      '<input class="cL" type="text" inputmode="numeric" placeholder="例 45:30" value="' + esc(r.left) + '"><button type="button" class="x" title="刪除這列" aria-label="刪除這列">✕</button></div>';
   }
 
   function floorRows(floors) {
@@ -121,7 +121,7 @@
   }
 
   function recsHtml(recs) {
-    if (!recs.length) return '<p class="muted">還沒有紀錄。</p>';
+    if (!recs.length) return '<p class="muted">本季還沒有紀錄，整理後會放上來給大家參考。</p>';
     return '<div class="tbl-wrap"><table class="dojo-tbl"><thead><tr><th>職業</th><th>賽季</th><th>模式</th><th>打到</th><th>計時器剩</th><th>用時</th><th>得分</th><th>每小時</th><th>心得</th></tr></thead><tbody>' +
       recs.map(function (r) {
         var lft = parseLeft(r.left), used = lft == null ? null : 60 - lft;
@@ -237,7 +237,7 @@
   }
   function recEdRow(r) {
     var f = function (k, ph, w) { return '<input data-r="' + k + '" placeholder="' + ph + '" value="' + esc(r[k]) + '" style="width:' + w + '">'; };
-    return '<div class="rec-ed">' + f('cls', '職業', '5.5em') + f('season', '賽季', '4.5em') + f('mode', '模式', '3.5em') + f('floor', '層', '3em') + f('left', '剩 44:26', '5em') + f('pts', '得分', '4em') + f('note', '心得', '14em') +
+    return '<div class="rec-ed">' + f('cls', '職業', '5.5em') + f('season', '賽季', '4.5em') + f('mode', '模式', '3.5em') + f('floor', '層', '3em') + f('left', '剩 45:30', '5em') + f('pts', '得分', '4em') + f('note', '心得', '14em') +
       '<button type="button" class="x" title="刪除">✕</button></div>';
   }
 

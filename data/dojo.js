@@ -73,9 +73,7 @@ window.DOJO = {
     { "f": 46, "solo": 40, "party": 45, "boss": "", "hp": "", "note": "" },
     { "f": 47, "solo": 65, "party": 56, "boss": "武公", "hp": "", "note": "最終樓層；首次通關得「武陵道場征服者勳章」" }
   ],
-  "records": [
-    { "cls": "主教", "season": "第1季", "mode": "個人", "floor": 36, "left": "44:26", "pts": 260, "note": "打完大巴就重來最划算；35 層後每層約 2 分鐘" }
-  ],
+  "records": [],
   "shop": [
     { "item": "經驗值3倍券(10分鐘)", "coin": 45, "limit": 1, "reset": "每月" },
     { "item": "掉落率3倍券(10分鐘)", "coin": 45, "limit": 1, "reset": "每月" },
