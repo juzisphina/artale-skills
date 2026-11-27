@@ -444,3 +444,11 @@ a.pill { color: inherit; text-decoration: none; }
   .top .brand span { font-size: 15px; }
   .top-actions { gap: 6px; }
 }
+/* dojo boss pictures */
+.boss-cell{display:flex;align-items:center;gap:10px;min-width:170px}
+.boss-cell img,.boss-cell .no-img{width:56px;height:56px;object-fit:contain;flex:none}
+.boss-cell .no-img{display:grid;place-items:center;border-radius:10px;background:var(--line);color:var(--faint);font-weight:700}
+.boss-new{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:0 0 12px}
+.boss-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;padding:10px;border:1px solid var(--line);border-radius:12px}
+.boss-card img{width:96px;height:96px;object-fit:contain}
+.boss-card small{opacity:.8;line-height:1.4}
